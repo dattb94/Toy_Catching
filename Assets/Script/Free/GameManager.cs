@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
     public static bool beLost = false;
     void Start()
     {
+        Modules.isCanPick = true;
         Modules.pauseGame = false;
         Modules.LoadDataFree();
         Modules.scoreScene = Modules.scoreNowFree;
@@ -86,6 +87,8 @@ public class GameManager : MonoBehaviour {
             if (FindObjectOfType<ItemImage>())
             {
                 Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+                Modules.isCanPick = false;
+                StartCoroutine(Modules.WaitIsCanPick());
             }
 
         }

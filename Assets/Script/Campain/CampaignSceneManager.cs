@@ -20,6 +20,7 @@ public class CampaignSceneManager : MonoBehaviour {
     public Transform parentCampainStack;
     void Start()
     {
+        Modules.isCanPick = true;
         maxCampain = parentCampainStack.childCount;
         SetBarrierTop();
         Modules.LoadDataCampain();
@@ -155,6 +156,8 @@ public class CampaignSceneManager : MonoBehaviour {
                 if (FindObjectOfType<ItemImage>())
             {
                 Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+                Modules.isCanPick = false;
+                StartCoroutine(Modules.WaitIsCanPick());
             }
         }
         if (Input.GetMouseButtonDown(1))

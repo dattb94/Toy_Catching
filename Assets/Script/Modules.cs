@@ -6,6 +6,7 @@ public class Modules : MonoBehaviour {
     #region xu ly chung
     public static int countBeChoise = 0;
     public static bool keepItem;
+    public static bool isCanPick;
     public static int scoreScene = 0;
     public static int localMouse = 0;
     public static bool isSpawning = false;
@@ -26,8 +27,19 @@ public class Modules : MonoBehaviour {
             scoreScene += (x * 50);
         }
     }
+    public void SetIsCanPick()
+    {
+        StartCoroutine(WaitIsCanPick());
+    }
+    public static IEnumerator WaitIsCanPick()
+    {
+        yield return new WaitForSeconds(0.2f);
+        isCanPick = true;
+    }
     public static void PickItem(int _row, List<GameObject> _listPick, Row[] _rows, GameObject _goChoise, Transform[] _listLocal)
     {
+        if (!isCanPick)
+            return;
         _listPick.Clear();
         int x = 0;
         if (_rows[_row].items[0] != null)
