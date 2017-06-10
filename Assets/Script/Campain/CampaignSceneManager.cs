@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class CampaignSceneManager : MonoBehaviour {
     public Transform[] listLocal;
     public static float timeSpawn = 0;
-    float TimeSpawn=15;
+    float TimeSpawn = 15;
     public static bool spawn = false;
     public GameObject goChoise;
     public Row[] rows = new Row[9];
@@ -14,13 +14,14 @@ public class CampaignSceneManager : MonoBehaviour {
     float loadRows = 0;
     public static bool beLost = false;
     int levelGame = 1, xxBoom = 0, xxIron = 0, scoreNeed;
-    int timePlay, timeMax=10;
+    int timePlay, timeMax = 10;
     bool win = false;
     int maxCampain;
     public Transform parentCampainStack;
     void Start()
     {
         maxCampain = parentCampainStack.childCount;
+        SetBarrierTop();
         Modules.LoadDataCampain();
         Modules.keepItem = false;
         win = false;
@@ -93,13 +94,14 @@ public class CampaignSceneManager : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     public GameObject WinBox, LostBox;
-    public Text textScoreScene, textScoreTotal;
+    public Text textScoreScene, textScoreTotal, textLevelWin;
     void Win()
     {
         Modules.LoadDataCampain();
         win = true;
         WinBox.SetActive(true);
-        textScoreScene.text = "Score: " +Modules.scoreScene;
+        textScoreScene.text = "Score: " + Modules.scoreScene;
+        textLevelWin.text = "Level: " + Modules.indexCampainNow;
         Modules.scoreTotalCampain += Modules.scoreScene;
         Modules.SaveScoreTotalCampain();
         textScoreTotal.text = "Score total: " + Modules.scoreTotalCampain;
@@ -109,7 +111,7 @@ public class CampaignSceneManager : MonoBehaviour {
     void Update()
     {
         SetDataStateBar();
-        if (Modules.scoreScene >= scoreNeed&&!win)
+        if (Modules.scoreScene >= scoreNeed && !win)
         {
             Win();
         }
@@ -138,7 +140,7 @@ public class CampaignSceneManager : MonoBehaviour {
             timeSpawn = 0;
         }
         else Modules.isSpawning = false; ;
-        Modules.SetChoisePosition(goChoise,listLocal);
+        Modules.SetChoisePosition(goChoise, listLocal);
         if (Input.GetMouseButtonDown(0))
         {
 
@@ -146,7 +148,7 @@ public class CampaignSceneManager : MonoBehaviour {
             {
                 if (listLocal[Modules.localMouse - 1].childCount > 0)
                 {
-                    Modules.PickItem(Modules.localMouse - 1, listPick, rows, goChoise,listLocal);
+                    Modules.PickItem(Modules.localMouse - 1, listPick, rows, goChoise, listLocal);
                 }
             }
             else
@@ -164,7 +166,7 @@ public class CampaignSceneManager : MonoBehaviour {
         {
             for (int i = 0; i < rows.Length; i++)
             {
-                Modules.Row(i,rows, listLocal);
+                Modules.Row(i, rows, listLocal);
             }
         }
     }
@@ -177,14 +179,11 @@ public class CampaignSceneManager : MonoBehaviour {
         //imgTimer.fillAmount = (float)scoreNeed / Modules.scoreScene;
         imgTimeSpawn.fillAmount = (float)timeSpawn / TimeSpawn;
         //print((float)timeSpawn / TimeSpawn);
-        textScoreNeed.text = (int)(((float)Modules.scoreScene / scoreNeed) *100) + "%";
-        textLevel.text = "Level: "+levelGame;
+        //textScoreNeed.text = (int)(((float)Modules.scoreScene / scoreNeed) * 100) + "%";
+        textScoreNeed.text = Modules.scoreScene +"/"+ scoreNeed;
+        textLevel.text = "Level: " + levelGame;
         textScore.text = "Score: " + Modules.scoreScene;
         textTotalSCore.text = "Total score: " + Modules.scoreTotalCampain;
-    }
-    public void BtnPlayAgain()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     //
     void Spawn()
@@ -258,7 +257,7 @@ public class CampaignSceneManager : MonoBehaviour {
         float normal;
         switch (levelGame)
         {
-            case 0: normal=(100/3 ); break;
+            case 0: normal = (100 / 3); break;
             default: normal = (100 - xxBoom - xxIron) / 4; ; break;
         }
         x = UnityEngine.Random.Range(0, 100);
@@ -282,5 +281,18 @@ public class CampaignSceneManager : MonoBehaviour {
     {
         Destroy(GameObject.Find("CamPaignData"));
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+    public void ButtonRetryClick()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+    //xu ly barrier top
+    public GameObject barrierTop, p1;
+    void SetBarrierTop()
+    {
+        barrierTop.transform.localScale = new Vector3(barrierTop.transform.localScale.x, p1.transform.localScale.x, 
+            barrierTop.transform.localScale.z);
+        barrierTop.transform.position = new Vector3(barrierTop.transform.position.x, p1. transform.position.y+Modules.DistanceItems(),
+            barrierTop.transform.position.z);
     }
 }
