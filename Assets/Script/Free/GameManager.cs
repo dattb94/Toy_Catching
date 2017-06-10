@@ -185,6 +185,11 @@ public class GameManager : MonoBehaviour {
             listPick.Clear();
         }
     }
+    public void WhenPauseGame()
+    {
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
     //
     //xu ly nut home
     public GameObject exitBox;
@@ -221,6 +226,14 @@ public class GameManager : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     //
+    //xu ly nut leaderboard
+    public GameObject leaderBoardBox;
+    public void ButtonLeaderBoardClick()
+    {
+        leaderBoardBox.SetActive(true);
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
     GameObject RdItemsLv1()
     {
         int x = 0;

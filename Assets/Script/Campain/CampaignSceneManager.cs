@@ -111,6 +111,8 @@ public class CampaignSceneManager : MonoBehaviour {
     }
     void Update()
     {
+        if (Modules.pauseGame)
+            return;
         SetDataStateBar();
         if (Modules.scoreScene >= scoreNeed && !win)
         {
@@ -298,4 +300,20 @@ public class CampaignSceneManager : MonoBehaviour {
         barrierTop.transform.position = new Vector3(barrierTop.transform.position.x, p1. transform.position.y+Modules.DistanceItems(),
             barrierTop.transform.position.z);
     }
+    //
+    public void WhenPauseGame()
+    {
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
+    //xu ly nut leaderboard
+    public GameObject leaderBoardBox;
+    public void ButtonLeaderBoardClick()
+    {
+        leaderBoardBox.SetActive(true);
+        Modules.pauseGame = true;
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
+    //
 }

@@ -76,8 +76,15 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>Assets\LeaderBoradOffline\plugin\LitJson.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\LeaderBoradOffline\Script\CampainBox.cs" />
+    <Compile Include="Assets\LeaderBoradOffline\Script\FreeBox.cs" />
+    <Compile Include="Assets\LeaderBoradOffline\Script\LeaderBoardController.cs" />
+    <Compile Include="Assets\LeaderBoradOffline\Script\Moduless.cs" />
     <Compile Include="Assets\Script\Campain\CampaignSceneManager.cs" />
     <Compile Include="Assets\Script\Campain\StartCampainManager.cs" />
     <Compile Include="Assets\Script\CheckTop.cs" />
