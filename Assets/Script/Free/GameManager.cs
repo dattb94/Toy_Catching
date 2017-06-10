@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour {
     public static bool beLost = false;
     void Start()
     {
+        Modules.pauseGame = false;
+        Modules.LoadDataFree();
+        Modules.scoreScene = Modules.scoreNowFree;
         Modules.keepItem = false;
         beLost = false;
         timeSpawn = TimeSpawn - 1;
@@ -30,6 +33,9 @@ public class GameManager : MonoBehaviour {
     }
     void Update()
     {
+        if (Modules.pauseGame)
+            return;
+        SetDataButtonPause();
         CalcuLevel();
         if (beLost)
         {
@@ -41,20 +47,24 @@ public class GameManager : MonoBehaviour {
             imgLost.gameObject.SetActive(false);
             btnLost.SetActive(false);
         }
+
         if (Modules.keepItem)
         {
             Modules.countBeChoise = 0;
         }
-        else Modules.CalcuItemBeChoise( listLocal);
+        else Modules.CalcuItemBeChoise(listLocal);
         timeGame += Time.deltaTime;
-        if(timeGame>=0.5f)
+        if (timeGame >= 0.5f)
         {
             imgTime.fillAmount = timeSpawn / TimeSpawn;
             txtScore.text = "Score: " + Modules.scoreScene;
             txtLv.text = "Level: " + _lv;
             txtTime.text = "Time:: " + (int)timeGame;
+            if (timeGame<0.6f)
+            {
+                timeGame = Modules.timeNowFree;
+            }
         }
-
         timeSpawn += Time.deltaTime;
         if (timeSpawn > TimeSpawn)
         {
@@ -65,24 +75,19 @@ public class GameManager : MonoBehaviour {
         Modules.SetChoisePosition(goChoise, listLocal);
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log(Modules.keepItem);
             if (!Modules.keepItem)
             {
                 if (listLocal[Modules.localMouse - 1].childCount > 0)
                 {
-                    Modules.PickItem(Modules.localMouse -1, listPick, rows, goChoise, listLocal);
+                    Modules.PickItem(Modules.localMouse - 1, listPick, rows, goChoise, listLocal);
                 }
-                else Debug.Log("null");
             }
             else
-                if (FindObjectOfType<ItemImage>())
+            if (FindObjectOfType<ItemImage>())
             {
-                Modules.ThrowItem(Modules.localMouse - 1,rows, listPick, listLocal);
+                Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
             }
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            rows[0].items.Clear();
+
         }
         loadRows -= Time.deltaTime;
         if (loadRows <= 0)
@@ -93,10 +98,6 @@ public class GameManager : MonoBehaviour {
             }
             loadRows = 0.5f;
         }
-    }
-    public void BtnPlayAgain()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     void Spawn()
     {
@@ -153,6 +154,70 @@ public class GameManager : MonoBehaviour {
             TimeSpawn = 6;
         }
     }
+    //xu ly nut' pause game
+    public GameObject buttonPause, pauseBox;
+    public Sprite sprPause, sprPlay;
+    public void SetDataButtonPause()
+    {
+        if (Modules.pauseGame == true)
+        {
+            buttonPause.GetComponent<Image>().sprite =sprPlay;
+        }
+        else buttonPause.GetComponent<Image>().sprite = sprPause;
+    }
+    public void ButtonPauseClick()
+    {
+        if (Modules.pauseGame == true)
+        {
+            Modules.pauseGame = false;
+            pauseBox.SetActive(false);
+            Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+            Modules.keepItem = false;
+        }
+        else {
+            Modules.pauseGame = true;
+            pauseBox.SetActive(true);
+            Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+            Modules.keepItem = false;
+            listPick.Clear();
+        }
+    }
+    //
+    //xu ly nut home
+    public GameObject exitBox;
+    public void ButtonHomeClick()
+    {
+        exitBox.SetActive(true);
+        Modules.pauseGame = true;
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
+    public void ButtonYesClick()
+    {
+        Modules.timeNowFree = (int)timeGame;
+        Modules.scoreNowFree = Modules.scoreScene;
+        Modules.SaveTimeNowFree();
+        Modules.SaveScoreNowFree();
+        StartCoroutine(WaitLoadSceneHome());
+    }
+    public void ButtonNoClick()
+    {
+        Modules.ResetDataFree();
+        StartCoroutine(WaitLoadSceneHome());
+    }
+    public void ButtonHideExitBoxClick()
+    {
+        exitBox.SetActive(false);
+        Modules.pauseGame = false;
+        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
+        Modules.keepItem = false;
+    }
+    IEnumerator WaitLoadSceneHome()
+    {
+        yield return new WaitForSeconds(1);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+    //
     GameObject RdItemsLv1()
     {
         int x = 0;

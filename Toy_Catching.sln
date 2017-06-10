@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toy_Catching.CSharp", "Toy_Catching.CSharp.csproj", "{C64C1FF4-8030-B4CB-5F88-0FE82BB2D3EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C64C1FF4-8030-B4CB-5F88-0FE82BB2D3EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64C1FF4-8030-B4CB-5F88-0FE82BB2D3EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64C1FF4-8030-B4CB-5F88-0FE82BB2D3EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64C1FF4-8030-B4CB-5F88-0FE82BB2D3EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

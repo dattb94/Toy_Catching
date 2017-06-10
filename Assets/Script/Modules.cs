@@ -9,6 +9,7 @@ public class Modules : MonoBehaviour {
     public static int scoreScene = 0;
     public static int localMouse = 0;
     public static bool isSpawning = false;
+    public static bool pauseGame=false;
     public static void CalcuItemBeChoise(Transform[] _listLocal)
     {
         int x = 0;
@@ -215,6 +216,32 @@ public class Modules : MonoBehaviour {
         SaveIndexCampainNow();
         SaveScoreTotalCampain();
 
+    }
+    #endregion
+    #region xy ly phan free
+    public static float timeNowFree;
+    public static int scoreNowFree;
+    public static void SaveTimeNowFree()
+    {
+        PlayerPrefs.SetFloat("timeNowFree", timeNowFree);
+        PlayerPrefs.Save();
+    }
+    public static void SaveScoreNowFree()
+    {
+        PlayerPrefs.SetInt("scoreNowFree", scoreNowFree);
+        PlayerPrefs.Save();
+    }
+    public static void LoadDataFree()
+    {
+        timeNowFree = PlayerPrefs.GetFloat("timeNowFree");
+        scoreNowFree = PlayerPrefs.GetInt("scoreNowFree");
+    }
+    public static void ResetDataFree()
+    {
+        timeNowFree = 1f;
+        scoreNowFree = 0;
+        SaveScoreNowFree();
+        SaveTimeNowFree();
     }
     #endregion
 }

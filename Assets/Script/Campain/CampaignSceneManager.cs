@@ -16,8 +16,11 @@ public class CampaignSceneManager : MonoBehaviour {
     int levelGame = 1, xxBoom = 0, xxIron = 0, scoreNeed;
     int timePlay, timeMax=10;
     bool win = false;
+    int maxCampain;
+    public Transform parentCampainStack;
     void Start()
     {
+        maxCampain = parentCampainStack.childCount;
         Modules.LoadDataCampain();
         Modules.keepItem = false;
         win = false;
@@ -165,7 +168,7 @@ public class CampaignSceneManager : MonoBehaviour {
             }
         }
     }
-    //setdata state bar
+    //state bar
     public Image imgScoreNeed, imgTimer, imgTimeSpawn;
     public Text textTimer, textScoreNeed, textLevel, textScore, textTotalSCore;
     void SetDataStateBar()
