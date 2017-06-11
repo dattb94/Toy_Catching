@@ -84,7 +84,7 @@
     <Compile Include="Assets\LeaderBoradOffline\Script\CampainBox.cs" />
     <Compile Include="Assets\LeaderBoradOffline\Script\FreeBox.cs" />
     <Compile Include="Assets\LeaderBoradOffline\Script\LeaderBoardController.cs" />
-    <Compile Include="Assets\LeaderBoradOffline\Script\Moduless.cs" />
+    <Compile Include="Assets\LeaderBoradOffline\Script\SetPlayerInfoBoxController.cs" />
     <Compile Include="Assets\Script\Campain\CampaignSceneManager.cs" />
     <Compile Include="Assets\Script\Campain\StartCampainManager.cs" />
     <Compile Include="Assets\Script\CheckTop.cs" />

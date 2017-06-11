@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using System.IO;
+using LitJson;
 public class Modules : MonoBehaviour {
     #region xu ly chung
     public static int countBeChoise = 0;
@@ -11,6 +13,7 @@ public class Modules : MonoBehaviour {
     public static int localMouse = 0;
     public static bool isSpawning = false;
     public static bool pauseGame=false;
+    public static int levelFreeNow=0;
     public static void CalcuItemBeChoise(Transform[] _listLocal)
     {
         int x = 0;
@@ -127,6 +130,82 @@ public class Modules : MonoBehaviour {
     {
         return Vector3.Distance(GameObject.Find("p1").transform.position, GameObject.Find("p2").transform.position);
     }
+    public static void Spawn(Transform[] _listLocal)
+    {
+        Modules.isSpawning = true;
+        for (int i = 0; i < _listLocal.Length; i++)
+        {
+            GameObject go = null;
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Campaign")
+                go = RdItemsCampain();
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "demo")
+                go = RdItemsFree();
+            GameObject item = Instantiate(go, _listLocal[i].position, go.transform.rotation) as GameObject;
+            switch (i)
+            {
+                case 0: item.transform.SetParent(_listLocal[0]); break;
+                case 1: item.transform.SetParent(_listLocal[1]); break;
+                case 2: item.transform.SetParent(_listLocal[2]); break;
+                case 3: item.transform.SetParent(_listLocal[3]); break;
+                case 4: item.transform.SetParent(_listLocal[4]); break;
+                case 5: item.transform.SetParent(_listLocal[5]); break;
+                case 6: item.transform.SetParent(_listLocal[6]); break;
+                case 7: item.transform.SetParent(_listLocal[7]); break;
+                case 8: item.transform.SetParent(_listLocal[8]); break;
+            }
+        }
+    }
+    static GameObject RdItemsFree()
+    {
+        int x = 0;
+        int boom = 2;
+        float normal = 100 / 3;
+        int iron = 1;
+        switch (levelFreeNow)
+        {
+            case 1: iron = 0; normal = (100 - boom - iron) / 3; break;
+            case 2: iron = 0; normal = (100 - boom - iron) / 3; break;
+            case 3: iron = 1; boom = 3; normal = (100 - boom - iron - iron) / 4; break;
+            case 4: iron = 2; boom = 4; normal = (100 - boom - iron) / 4; break;
+            case 5: iron = 2; boom = 5; normal = (100 - boom - iron) / 4; break;
+        }
+        x = UnityEngine.Random.Range(0, 100);
+        if (x >= 0 && x <= normal) return Modules.Item(1);
+        if (x > normal && x <= normal * 2) return Modules.Item(2);
+        if (x > normal * 2 && x <= normal * 3) return Modules.Item(3);
+        if (x > normal * 3 && x <= normal * 4) return Modules.Item(4);
+        if (x > normal * 4 && x < 100 - boom) { Debug.Log("x"); return Modules.Item(5); }
+        if (x >= 100 - boom) return Modules.Item(6);
+        else return null;
+
+    }
+    static GameObject RdItemsCampain()
+    {
+        print("campain");
+        int x = 0;
+        float normal;
+        switch (Modules.indexCampainNow)
+        {
+            case 0: normal = (100 / 3); break;
+            default: normal = (100 - Modules.xxBoom - Modules.xxIron) / 4; ; break;
+        }
+        x = UnityEngine.Random.Range(0, 100);
+        if (x >= 0 && x <= normal)
+            return Modules.Item(1);
+        else if (x > normal && x <= normal * 2)
+            return Modules.Item(2);
+        else if (x > normal * 2 && x <= normal * 3)
+            return Modules.Item(3);
+        else if (x > normal * 3 && x <= normal * 4)
+            return Modules.Item(4);
+        else if (x > normal * 4 && x <= 100 - Modules.xxBoom - Modules.xxIron)
+            return Modules.Item(5);
+        else if (x >= 100 - Modules.xxBoom)
+            return Modules.Item(6);
+        else {
+            return Modules.Item(1);
+        }
+    }
     public static GameObject Item(int __type)
     {
         if (__type == 1) return Resources.Load<GameObject>("item/item1");
@@ -202,10 +281,27 @@ public class Modules : MonoBehaviour {
             _listLocal[_row].transform.GetChild(i).gameObject.GetComponent<item>()._DesTroy();
         }
     }
+    public static void SetBarrierTop(GameObject _barrierTop)
+    {
+        GameObject p1 = GameObject.Find("p1");
+        _barrierTop.transform.localScale = new Vector3(_barrierTop.transform.localScale.x, p1.transform.localScale.x,
+            _barrierTop.transform.localScale.z);
+        _barrierTop.transform.position = new Vector3(_barrierTop.transform.position.x, p1.transform.position.y + Modules.DistanceItems(),
+            _barrierTop.transform.position.z);
+    }
     #endregion
     #region xu ly phan champain
     public static int scoreTotalCampain;
     public static int indexCampainNow;
+    public static int level
+    {
+        get
+        {
+            LoadDataCampain();
+            return indexCampainNow + 1;
+        }
+    }
+    public static int xxBoom, xxIron, scoreNeed;
     public static void SaveScoreTotalCampain()
     {
         PlayerPrefs.SetInt("scoreTotalCampain", scoreTotalCampain);
@@ -220,6 +316,47 @@ public class Modules : MonoBehaviour {
     {
         scoreTotalCampain = PlayerPrefs.GetInt("scoreTotalCampain");
         indexCampainNow = PlayerPrefs.GetInt("indexCampainNow");
+        switch (indexCampainNow)
+        {
+            case 0:
+                {
+                    xxBoom = 0;
+                    xxIron = 0;
+                    break;
+                }
+            case 1:
+                {
+                    xxBoom = 0;
+                    xxIron = 0;
+                    break;
+                }
+            case 2:
+                {
+                    xxBoom = 3;
+                    xxIron = 0;
+                    break;
+                }
+            case 3:
+                {
+                    xxBoom = 3;
+                    xxIron = 10;
+
+                    break;
+                }
+            case 4:
+                {
+                    xxBoom = 3;
+                    xxIron = 10;
+                    break;
+                }
+            default:
+                {
+                    xxBoom = 3;
+                    xxIron = 10;
+                    break;
+                }
+        }
+        scoreNeed = 20000 + (indexCampainNow + 1) * 5000;
     }
     public static void ResetCampainData()
     {
@@ -256,4 +393,160 @@ public class Modules : MonoBehaviour {
         SaveTimeNowFree();
     }
     #endregion
+    #region xu ly leader board
+    // Xu ly phan Set player infor
+    public static string namePlayer;
+    public static Sprite avatar;
+    public static int indexAvatar;
+    public static Sprite GetAvatar(int _index)
+    {
+        if (_index == 0)
+            return Resources.Load<Sprite>("Avatar/0");
+        else if (_index == 1)
+            return Resources.Load<Sprite>("Avatar/1");
+        else if (_index == 2)
+            return Resources.Load<Sprite>("Avatar/2");
+        else if (_index == 3)
+            return Resources.Load<Sprite>("Avatar/3");
+        else if (_index == 4)
+            return Resources.Load<Sprite>("Avatar/4");
+        else if (_index == 5)
+            return Resources.Load<Sprite>("Avatar/5");
+        else if (_index == 6)
+            return Resources.Load<Sprite>("Avatar/6");
+        else if (_index == 7)
+            return Resources.Load<Sprite>("Avatar/7");
+        else if (_index == 8)
+            return Resources.Load<Sprite>("Avatar/8");
+        else if (_index == 9)
+            return Resources.Load<Sprite>("Avatar/9");
+        else if (_index == 10)
+            return Resources.Load<Sprite>("Avatar/10");
+        else if (_index == 11)
+            return Resources.Load<Sprite>("Avatar/11");
+        else return null;
+    }
+    public static void ResetLeaderBoard()
+    {
+        leaderFree.Clear();
+        leaderCampain.Clear();
+        SaveLeaderCampain();
+        SaveLeaderFree();
+    }
+    //
+    //xu ly phan save and load du lieu leader free
+    public static List<PlayerInfor> leaderFree = new List<PlayerInfor>();
+    public static void SaveLeaderFree()
+    {
+        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderFree.json";
+        if (!File.Exists(dataPath))
+        {
+            File.Create(dataPath);
+            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderFree));
+        }
+        else
+            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderFree));
+    }
+    public static void LoadLeaderBoardFree()
+    {
+        //Lay du lieu tu file json ve
+        leaderFree.Clear();
+        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderFree.json";
+        string jsonString = File.ReadAllText(dataPath);
+        JsonData json = JsonMapper.ToObject(jsonString);
+        for (int i = 0; i < json.Count; i++)
+        {
+            {
+                leaderFree.Add(new PlayerInfor((string)json[i]["namePlayer"], (int)json[i]["avatar"], (int)json[i]["score"]));
+            }
+        }
+        // Sap xep leader theo score
+        for (int i = 0; i < leaderFree.Count - 1; i++)
+            for (int j = i + 1; j < leaderFree.Count; j++)
+            {
+                if (leaderFree[i].score < leaderFree[j].score)
+                {
+                    PlayerInfor x = leaderFree[i];
+                    leaderFree[i] = leaderFree[j];
+                    leaderFree[j] = x;
+                }
+            }
+        print(jsonString);
+        print(leaderFree.Count);
+    }
+    public static void AddNewDataToLeaderFree(PlayerInfor _newData)
+    {
+        LoadDataFree();
+        leaderFree.Add(_newData);
+        SaveLeaderFree();
+        print("add");
+    }
+    //
+    // Xu ly phan leader board campain
+    public static List<PlayerInfor> leaderCampain = new List<PlayerInfor>();
+    public static void SaveLeaderCampain()
+    {
+        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderCampain.json";
+        if (!File.Exists(dataPath))
+        {
+            File.Create(dataPath);
+            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderCampain));
+        }
+        else
+            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderCampain));
+    }
+    public static void LoadLeaderBoardCampain()
+    {
+        //Lay du lieu tu file json ve
+        leaderCampain.Clear();
+        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderCampain.json";
+        string jsonString = File.ReadAllText(dataPath);
+        JsonData json = JsonMapper.ToObject(jsonString);
+        for (int i = 0; i < json.Count; i++)
+        {
+            {
+                leaderCampain.Add(new PlayerInfor((string)json[i]["namePlayer"], (int)json[i]["avatar"], (int)json[i]["score"], (int)json[i]["level"]));
+            }
+        }
+        // Sap xep leader theo score
+        for (int i = 0; i < leaderCampain.Count - 1; i++)
+            for (int j = i + 1; j < leaderCampain.Count; j++)
+            {
+                if (leaderCampain[i].level < leaderCampain[j].level)
+                {
+                    PlayerInfor x = leaderCampain[i];
+                    leaderCampain[i] = leaderCampain[j];
+                    leaderCampain[j] = x;
+                }
+            }
+    }
+    public static void AddNewDataToLeaderCampain(PlayerInfor _newData)
+    {
+        LoadLeaderBoardCampain();
+        leaderCampain.Add(_newData);
+        SaveLeaderCampain();
+    }
+    //
+    #endregion
+}
+public class PlayerInfor
+{
+    public string namePlayer;
+    public int avatar;
+    public int score;
+    public int level;
+
+    public PlayerInfor(string _name, int _avatar, int _score)// khai bao phan free
+    {
+        namePlayer = _name;
+        avatar = _avatar;
+        score = _score;
+    }
+    public PlayerInfor(string _name, int _avatar, int _score, int _level)// khai bao phan campain
+    {
+        namePlayer = _name;
+        avatar = _avatar;
+        score = _score;
+        level = _level;
+    }
 }

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class CampaignSceneManager : MonoBehaviour {
+public class CampaignSceneManager : MonoBehaviour
+{
     public Transform[] listLocal;
     public static float timeSpawn = 0;
     float TimeSpawn = 15;
@@ -13,22 +14,20 @@ public class CampaignSceneManager : MonoBehaviour {
     float timeGame = 0;
     float loadRows = 0;
     public static bool beLost = false;
-    int levelGame = 1, xxBoom = 0, xxIron = 0, scoreNeed;
     int timePlay, timeMax = 10;
     bool win = false;
     int maxCampain;
     public Transform parentCampainStack;
     void Start()
     {
+        Modules.pauseGame = false;
         Modules.isCanPick = true;
         maxCampain = parentCampainStack.childCount;
-        SetBarrierTop();
+        Modules.SetBarrierTop(barrierTop);
         Modules.LoadDataCampain();
         Modules.keepItem = false;
         win = false;
         Modules.scoreScene = 0;
-        levelGame = Modules.indexCampainNow;
-        InitValueStart();
         beLost = false;
         timeSpawn = TimeSpawn - 1;
         for (int i = 0; i < rows.Length; i++)
@@ -36,64 +35,7 @@ public class CampaignSceneManager : MonoBehaviour {
             rows[i] = new Row(new List<GameObject>());
         }
     }
-    void InitValueStart()
-    {
-        switch (levelGame)
-        {
-            case 0: {
-                    xxBoom = 0;
-                    xxIron = 0;
-
-                    scoreNeed = 20000;
-
-                    break;
-                }
-            case 1:
-                {
-                    xxBoom = 0;
-                    xxIron = 0;
-                    scoreNeed = 25000;
-                    break;
-                }
-            case 2:
-                {
-                    xxBoom = 3;
-                    xxIron = 0;
-                    scoreNeed = 35000;
-
-                    break;
-                }
-            case 3:
-                {
-                    xxBoom = 3;
-                    xxIron = 10;
-                    scoreNeed = 45000;
-
-                    break;
-                }
-            case 4:
-                {
-                    xxBoom = 3;
-                    xxIron = 10;
-                    scoreNeed = 60000;
-
-                    break;
-                }
-            default:
-                {
-                    xxBoom = 3;
-                    xxIron = 10;
-                    scoreNeed = 70000;
-
-                    break;
-                }
-        }
-    }
     public GameObject CamPainContain, StartCampainContain;
-    public void ButtonHideWinBox()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-    }
     public GameObject WinBox, LostBox;
     public Text textScoreScene, textScoreTotal, textLevelWin;
     void Win()
@@ -102,19 +44,29 @@ public class CampaignSceneManager : MonoBehaviour {
         win = true;
         WinBox.SetActive(true);
         textScoreScene.text = "Score: " + Modules.scoreScene;
-        textLevelWin.text = "Level: " + Modules.indexCampainNow;
+        textLevelWin.text = "Level: " + Modules.level;
         Modules.scoreTotalCampain += Modules.scoreScene;
         Modules.SaveScoreTotalCampain();
         textScoreTotal.text = "Score total: " + Modules.scoreTotalCampain;
         Modules.indexCampainNow += 1;
         Modules.SaveIndexCampainNow();
+        StartCoroutine(WaitLoadCampainScene());
+    }
+    IEnumerator WaitLoadCampainScene()
+    {
+        yield return new WaitForSeconds(3);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+    public void ButtonHideWinBox()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     void Update()
     {
         if (Modules.pauseGame)
             return;
         SetDataStateBar();
-        if (Modules.scoreScene >= scoreNeed && !win)
+        if (Modules.scoreScene >= Modules.scoreNeed && !win)
         {
             Win();
         }
@@ -139,7 +91,7 @@ public class CampaignSceneManager : MonoBehaviour {
         timeSpawn += Time.deltaTime;
         if (timeSpawn > TimeSpawn)
         {
-            Spawn();
+            Modules.Spawn(listLocal);
             timeSpawn = 0;
         }
         else Modules.isSpawning = false; ;
@@ -176,41 +128,18 @@ public class CampaignSceneManager : MonoBehaviour {
         }
     }
     //state bar
-    public Image imgScoreNeed, imgTimer, imgTimeSpawn;
+    public Image imgScoreNeed, imgTimeSpawn;
     public Text textTimer, textScoreNeed, textLevel, textScore, textTotalSCore;
     void SetDataStateBar()
     {
-        imgScoreNeed.fillAmount = (float)Modules.scoreScene / scoreNeed;
-        //imgTimer.fillAmount = (float)scoreNeed / Modules.scoreScene;
+        imgScoreNeed.fillAmount = (float)Modules.scoreScene / Modules.scoreNeed;
         imgTimeSpawn.fillAmount = (float)timeSpawn / TimeSpawn;
-        //print((float)timeSpawn / TimeSpawn);
-        //textScoreNeed.text = (int)(((float)Modules.scoreScene / scoreNeed) * 100) + "%";
-        textScoreNeed.text = Modules.scoreScene +"/"+ scoreNeed;
-        textLevel.text = "Level: " + levelGame;
+        textScoreNeed.text = Modules.scoreScene + "/" + Modules.scoreNeed;
+        textLevel.text = "Level: " + Modules.level;
         textScore.text = "Score: " + Modules.scoreScene;
         textTotalSCore.text = "Total score: " + Modules.scoreTotalCampain;
     }
     //
-    void Spawn()
-    {
-        Modules.isSpawning = true;
-        for (int i = 0; i < listLocal.Length; i++)
-        {
-            GameObject item = Instantiate(RdItemsLv1(), listLocal[i].position, RdItemsLv1().transform.rotation) as GameObject;
-            switch (i)
-            {
-                case 0: item.transform.SetParent(listLocal[0]); break;
-                case 1: item.transform.SetParent(listLocal[1]); break;
-                case 2: item.transform.SetParent(listLocal[2]); break;
-                case 3: item.transform.SetParent(listLocal[3]); break;
-                case 4: item.transform.SetParent(listLocal[4]); break;
-                case 5: item.transform.SetParent(listLocal[5]); break;
-                case 6: item.transform.SetParent(listLocal[6]); break;
-                case 7: item.transform.SetParent(listLocal[7]); break;
-                case 8: item.transform.SetParent(listLocal[8]); break;
-            }
-        }
-    }
     void CalcuLevel()
     {
         if (timeGame < 0.5f)
@@ -236,52 +165,6 @@ public class CampaignSceneManager : MonoBehaviour {
             TimeSpawn = 6;
         }
     }
-    IEnumerator IESpawn()
-    {
-        yield return new WaitForSeconds(0.1f);
-        for (int i = 0; i < listLocal.Length; i++)
-        {
-            GameObject item = Instantiate(RdItemsLv1(), listLocal[i].position, RdItemsLv1().transform.rotation) as GameObject;
-            switch (i)
-            {
-                case 0: item.transform.SetParent(listLocal[0]); break;
-                case 1: item.transform.SetParent(listLocal[1]); break;
-                case 2: item.transform.SetParent(listLocal[2]); break;
-                case 3: item.transform.SetParent(listLocal[3]); break;
-                case 4: item.transform.SetParent(listLocal[4]); break;
-                case 5: item.transform.SetParent(listLocal[5]); break;
-                case 6: item.transform.SetParent(listLocal[6]); break;
-                case 7: item.transform.SetParent(listLocal[7]); break;
-                case 8: item.transform.SetParent(listLocal[8]); break;
-            }
-        }
-    }
-    GameObject RdItemsLv1()
-    {
-        int x = 0;
-        float normal;
-        switch (levelGame)
-        {
-            case 0: normal = (100 / 3); break;
-            default: normal = (100 - xxBoom - xxIron) / 4; ; break;
-        }
-        x = UnityEngine.Random.Range(0, 100);
-        if (x >= 0 && x <= normal)
-            return Modules.Item(1);
-        else if (x > normal && x <= normal * 2)
-            return Modules.Item(2);
-        else if (x > normal * 2 && x <= normal * 3)
-            return Modules.Item(3);
-        else if (x > normal * 3 && x <= normal * 4)
-            return Modules.Item(4);
-        else if (x > normal * 4 && x <= 100 - xxBoom - xxIron)
-            return Modules.Item(5);
-        else if (x >= 100 - xxBoom)
-            return Modules.Item(6);
-        else {
-            return Modules.Item(1);
-        }
-    }
     public void BtnHome()
     {
         Destroy(GameObject.Find("CamPaignData"));
@@ -292,14 +175,7 @@ public class CampaignSceneManager : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     //xu ly barrier top
-    public GameObject barrierTop, p1;
-    void SetBarrierTop()
-    {
-        barrierTop.transform.localScale = new Vector3(barrierTop.transform.localScale.x, p1.transform.localScale.x, 
-            barrierTop.transform.localScale.z);
-        barrierTop.transform.position = new Vector3(barrierTop.transform.position.x, p1. transform.position.y+Modules.DistanceItems(),
-            barrierTop.transform.position.z);
-    }
+    public GameObject barrierTop;
     //
     public void WhenPauseGame()
     {

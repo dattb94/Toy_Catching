@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-public class StartCampainManager : MonoBehaviour {
+public class StartCampainManager : MonoBehaviour
+{
     void Start()
     {
         StartShow();
@@ -34,7 +35,6 @@ public class StartCampainManager : MonoBehaviour {
             Modules.SaveIndexCampainNow();
             print("nll");
         }
-        print(Modules.indexCampainNow+" "+ parentStacks.childCount);
         if (Modules.indexCampainNow != parentStacks.childCount)
         {
             buttonGift.GetComponent<Image>().color = Color.grey;
@@ -79,6 +79,15 @@ public class StartCampainManager : MonoBehaviour {
     public GameObject StartCampainContain, CamPainContain;
     public void ButtonStackClick()
     {
+        Modules.LoadDataCampain();
+        infoLebelBox.SetActive(true);
+        textLevel.text = "Level: " + Modules.level;
+        textScoreTarget.text = "target: " + Modules.scoreNeed + " score";
+        StartCoroutine(WaitLoadCampainContain());
+    }
+    IEnumerator WaitLoadCampainContain()
+    {
+        yield return new WaitForSeconds(2);
         StartCampainContain.SetActive(false);
         CamPainContain.SetActive(true);
     }
@@ -91,7 +100,7 @@ public class StartCampainManager : MonoBehaviour {
         Modules.scoreTotalCampain += 50000;
         Modules.SaveScoreTotalCampain();
         bonusScoreBox.SetActive(true);
-        textScoreTotalbonusBox.text = "Total score: "+Modules.scoreTotalCampain;
+        textScoreTotalbonusBox.text = "Total score: " + Modules.scoreTotalCampain;
         buttonGift.GetComponent<Button>().enabled = false;
         buttonGift.GetComponent<Animator>().enabled = false;
     }
@@ -106,5 +115,9 @@ public class StartCampainManager : MonoBehaviour {
         yield return new WaitForSeconds(1);
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
+    //
+    //Xy ly phan information level box
+    public GameObject infoLebelBox;
+    public Text textLevel, textScoreTarget;
     //
 }
