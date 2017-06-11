@@ -289,6 +289,9 @@ public class Modules : MonoBehaviour {
         _barrierTop.transform.position = new Vector3(_barrierTop.transform.position.x, p1.transform.position.y + Modules.DistanceItems(),
             _barrierTop.transform.position.z);
     }
+    // xu ly animation box
+    public static bool lbShow = false;// ani leader board
+    //
     #endregion
     #region xu ly phan champain
     public static int scoreTotalCampain;
@@ -397,7 +400,7 @@ public class Modules : MonoBehaviour {
     // Xu ly phan Set player infor
     public static string namePlayer;
     public static Sprite avatar;
-    public static int indexAvatar;
+    public static int indexAvatar=100;
     public static Sprite GetAvatar(int _index)
     {
         if (_index == 0)

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class SetPlayerInfoBoxController : MonoBehaviour {
-    public Text textInputName;
-    public GameObject scrollViewBox, contentBox, spiBox;
+    public Text textInputName, textReWrite;
+    public GameObject scrollViewBox, contentBox, buttonChoiseAvatar;
     void SetDataScrollViewBox()
     {
+        textReWrite.text = "";
         for (int i = 0; i < contentBox.transform.childCount; i++)
         {
             contentBox.transform.GetChild(i).GetComponent<Image>().sprite = Modules.GetAvatar(i);
@@ -31,17 +32,32 @@ public class SetPlayerInfoBoxController : MonoBehaviour {
         Modules.avatar = Modules.GetAvatar(_index);
         Modules.indexAvatar = _index;
         scrollViewBox.SetActive(false);
+        buttonChoiseAvatar.GetComponent<Image>().sprite = Modules.GetAvatar(_index);
     }
     public void ButtonSaveClick()
     {
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Campaign")
+        if (textInputName.text != null && Modules.indexAvatar != 100 && textInputName.text != "")
         {
-            Modules.AddNewDataToLeaderCampain(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreTotalCampain, Modules.indexCampainNow));
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Campaign")
+            {
+                Modules.AddNewDataToLeaderCampain(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreTotalCampain, Modules.indexCampainNow));
+            }
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "demo")
+            {
+                Modules.AddNewDataToLeaderFree(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreScene));
+            }
+            textReWrite.text = "Save complete!";
+            StartCoroutine(WaitLoadMain());
         }
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "demo")
+        else
         {
-            Modules.AddNewDataToLeaderFree(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreScene));
+            textReWrite.text = "name or avatar is null!";
         }
+    }
+    IEnumerator WaitLoadMain()
+    {
+        yield return new WaitForSeconds(3);
+
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     public void ButtonCancerClick()

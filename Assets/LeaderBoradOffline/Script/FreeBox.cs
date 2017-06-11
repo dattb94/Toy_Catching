@@ -8,7 +8,6 @@ public class FreeBox : MonoBehaviour {
     void Update()
     {
         SetDataContent();
-
     }
     //xu ly phan du content
     public Image imgCard;
@@ -29,7 +28,6 @@ public class FreeBox : MonoBehaviour {
         {
             contentBox.transform.GetChild(i).gameObject.SetActive(false);
         }
-        print(Modules.leaderFree[0].namePlayer);
         if (Modules.leaderFree.Count > 0)
         {
             for (int i = 0; i < Modules.leaderFree.Count; i++)
@@ -43,7 +41,6 @@ public class FreeBox : MonoBehaviour {
                 card.transform.FindChild("imgavatar").GetComponent<Image>().sprite = Modules.GetAvatar(Modules.leaderFree[i].avatar);
             }
         }
-
         //
     }
     //

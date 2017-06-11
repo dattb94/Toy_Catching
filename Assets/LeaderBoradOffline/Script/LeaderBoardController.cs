@@ -5,6 +5,11 @@ using UnityEngine.UI;
 public class LeaderBoardController : MonoBehaviour {
     public GameObject leaderBoardBox,buttonCampain, buttonFree;
     public Sprite[] spriteAvatar;
+    void Update()
+    {
+        print(Modules.lbShow);
+        leaderBoardBox.GetComponent<Animator>().SetBool("show",Modules.lbShow);
+    }
     public void ButtonCampainClick()
     {
         buttonCampain.SetActive(true);
@@ -17,14 +22,21 @@ public class LeaderBoardController : MonoBehaviour {
     }
     public void ButtonHideLBClick()
     {
-        leaderBoardBox.SetActive(false);
-        Modules.pauseGame = false;
-        if (FindObjectOfType<CampaignSceneManager>())
-            FindObjectOfType<CampaignSceneManager>().WhenPauseGame();
-        else if (FindObjectOfType<GameManager>())
+        Modules.lbShow = false;
+        StartCoroutine(WaithideLB());
+    }
+    IEnumerator WaithideLB()
+    {
+        yield return new WaitForSeconds(0.4f);
         {
-            FindObjectOfType<GameManager>().WhenPauseGame();
+            leaderBoardBox.SetActive(false);
+            Modules.pauseGame = false;
+            if (FindObjectOfType<CampaignSceneManager>())
+                FindObjectOfType<CampaignSceneManager>().WhenPauseGame();
+            else if (FindObjectOfType<GameManager>())
+            {
+                FindObjectOfType<GameManager>().WhenPauseGame();
+            }
         }
-        
     }
 }

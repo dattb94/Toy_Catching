@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
     public Transform[] listLocal;
     public static float timeSpawn = 0;
-    float TimeSpawn=10;
+    float TimeSpawn = 10;
     public static bool spawn = false;
     public GameObject goChoise;
     public Row[] rows = new Row[9];
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
         if (Input.GetKey(KeyCode.R))
             Modules.ResetLeaderBoard();
         if (Input.GetKeyDown(KeyCode.A))
-            Modules.AddNewDataToLeaderFree(new PlayerInfor("aaa", 2,300));
+            Modules.AddNewDataToLeaderFree(new PlayerInfor("aaa", 2, 300));
         SetDataInfogame();
         if (Modules.pauseGame)
             return;
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour {
         timeGame += Time.deltaTime;
         if (timeGame >= 0.5f)
         {
-            if (timeGame<0.6f)
+            if (timeGame < 0.6f)
             {
                 timeGame = Modules.timeNowFree;
             }
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour {
     {
         if (timeGame < 0.5f)
             TimeSpawn = 0.1f;
-        if (timeGame < 20&&timeGame>=0.5f)
+        if (timeGame < 20 && timeGame >= 0.5f)
         {
             Modules.levelFreeNow = 1;
             TimeSpawn = 10;
@@ -132,11 +132,11 @@ public class GameManager : MonoBehaviour {
     public Image imgTimeSpaw;
     void SetDataInfogame()
     {
-        if(Modules.leaderFree.Count>0)
-            txtBestScore.text = "Best: " +Modules.leaderFree[0].score;
+        if (Modules.leaderFree.Count > 0)
+            txtBestScore.text = "Best: " + Modules.leaderFree[0].score;
         else txtBestScore.text = "Best: " + 0;
         txtScoreFree.text = "Score: " + Modules.scoreScene;
-        txtTimePlay.text = "Time: "+(int)timeGame;
+        txtTimePlay.text = "Time: " + (int)timeGame;
         imgTimeSpaw.fillAmount = timeSpawn / TimeSpawn;
     }
     //
@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour {
     {
         if (Modules.pauseGame == true)
         {
-            buttonPause.GetComponent<Image>().sprite =sprPlay;
+            buttonPause.GetComponent<Image>().sprite = sprPlay;
         }
         else buttonPause.GetComponent<Image>().sprite = sprPause;
     }
@@ -176,6 +176,11 @@ public class GameManager : MonoBehaviour {
     //
     //xu ly nut home
     public GameObject exitBox;
+    public void ButtonRetryClick()
+    {
+        Modules.ResetDataFree();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
     public void ButtonHomeClick()
     {
         exitBox.SetActive(true);
@@ -214,6 +219,8 @@ public class GameManager : MonoBehaviour {
     public void ButtonLeaderBoardClick()
     {
         leaderBoardBox.SetActive(true);
+        Modules.lbShow = true;
+        Modules.pauseGame = true;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
         Modules.keepItem = false;
    }
@@ -229,8 +236,8 @@ public class GameManager : MonoBehaviour {
     }
     public void ButtonYes_qs()
     {
-        questionSaveBox.SetActive(false);
         infoPlayerBox.SetActive(true);
+        questionSaveBox.SetActive(false);
     }
     public void ButtonNo_qs()
     {
