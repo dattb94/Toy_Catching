@@ -12,8 +12,8 @@ public class Modules : MonoBehaviour {
     public static int scoreScene = 0;
     public static int localMouse = 0;
     public static bool isSpawning = false;
-    public static bool pauseGame=false;
-    public static int levelFreeNow=0;
+    public static bool pauseGame = false;
+    public static int levelFreeNow = 0;
     public static void CalcuItemBeChoise(Transform[] _listLocal)
     {
         int x = 0;
@@ -400,7 +400,7 @@ public class Modules : MonoBehaviour {
     // Xu ly phan Set player infor
     public static string namePlayer;
     public static Sprite avatar;
-    public static int indexAvatar=100;
+    public static int indexAvatar = 100;
     public static Sprite GetAvatar(int _index)
     {
         if (_index == 0)
@@ -530,6 +530,18 @@ public class Modules : MonoBehaviour {
         SaveLeaderCampain();
     }
     //
+    #endregion
+    #region xu ly am thanh
+    public static float volume = 1;
+    public static void SaveVolum()
+    {
+        PlayerPrefs.SetFloat("volume",volume);
+        PlayerPrefs.Save();
+    }
+    public static void LoadAudio()
+    {
+        volume = PlayerPrefs.GetFloat("volume");
+    }
     #endregion
 }
 public class PlayerInfor

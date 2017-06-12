@@ -93,7 +93,10 @@
     <Compile Include="Assets\Script\LocalBarManager.cs" />
     <Compile Include="Assets\Script\LocalItem.cs" />
     <Compile Include="Assets\Script\LocateBar.cs" />
+    <Compile Include="Assets\Script\Menu Main\NewBehaviourScript.cs" />
     <Compile Include="Assets\Script\Menu Main\SceneManager.cs" />
+    <Compile Include="Assets\Script\Menu Main\SettingAudioBox.cs" />
+    <Compile Include="Assets\Script\Menu Main\Thanhcuon.cs" />
     <Compile Include="Assets\Script\Modules.cs" />
     <Compile Include="Assets\Script\item.cs" />
   </ItemGroup>
