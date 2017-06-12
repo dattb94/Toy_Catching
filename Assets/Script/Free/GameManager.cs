@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour {
     }
     void Update()
     {
+        SetDataButtonPause();
         if (Input.GetKey(KeyCode.R))
             Modules.ResetLeaderBoard();
         if (Input.GetKeyDown(KeyCode.A))
@@ -40,7 +41,6 @@ public class GameManager : MonoBehaviour {
         SetDataInfogame();
         if (Modules.pauseGame)
             return;
-        SetDataButtonPause();
         CalcuLevel();
         if (beLost)
         {
@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour {
             TimeSpawn = 6;
         }
     }
+
     //Set data info game
     public Text txtScoreFree, txtTimePlay, txtBestScore;
     public Image imgTimeSpaw;
@@ -140,6 +141,7 @@ public class GameManager : MonoBehaviour {
         imgTimeSpaw.fillAmount = timeSpawn / TimeSpawn;
     }
     //
+
     //xu ly nut' pause game
     public GameObject buttonPause, pauseBox;
     public Sprite sprPause, sprPlay;
@@ -174,6 +176,7 @@ public class GameManager : MonoBehaviour {
         Modules.keepItem = false;
     }
     //
+
     //xu ly nut home
     public GameObject exitBox;
     public void ButtonRetryClick()
@@ -214,6 +217,7 @@ public class GameManager : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     //
+
     //xu ly nut leaderboard
     public GameObject leaderBoardBox;
     public void ButtonLeaderBoardClick()
@@ -223,10 +227,12 @@ public class GameManager : MonoBehaviour {
         Modules.pauseGame = true;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
         Modules.keepItem = false;
-   }
+        listPick.Clear();
+    }
     // set _barrierTop 
     public GameObject barrierTop;
     //
+
     //xy ly khi thua
     public GameObject questionSaveBox, infoPlayerBox;
     public void ButtonLostClick()

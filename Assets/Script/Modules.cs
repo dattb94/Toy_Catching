@@ -39,7 +39,8 @@ public class Modules : MonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         isCanPick = true;
     }
-    public static void PickItem(int _row, List<GameObject> _listPick, Row[] _rows, GameObject _goChoise, Transform[] _listLocal)
+    public static void PickItem(int _row, List<GameObject> _listPick, Row[] _rows, 
+        GameObject _goChoise, Transform[] _listLocal)
     {
         if (!isCanPick)
             return;
@@ -289,9 +290,11 @@ public class Modules : MonoBehaviour {
         _barrierTop.transform.position = new Vector3(_barrierTop.transform.position.x, p1.transform.position.y + Modules.DistanceItems(),
             _barrierTop.transform.position.z);
     }
+
     // xu ly animation box
     public static bool lbShow = false;// ani leader board
     //
+
     #endregion
     #region xu ly phan champain
     public static int scoreTotalCampain;
@@ -397,6 +400,7 @@ public class Modules : MonoBehaviour {
     }
     #endregion
     #region xu ly leader board
+
     // Xu ly phan Set player infor
     public static string namePlayer;
     public static Sprite avatar;
@@ -437,6 +441,7 @@ public class Modules : MonoBehaviour {
         SaveLeaderFree();
     }
     //
+
     //xu ly phan save and load du lieu leader free
     public static List<PlayerInfor> leaderFree = new List<PlayerInfor>();
     public static void SaveLeaderFree()
@@ -460,7 +465,8 @@ public class Modules : MonoBehaviour {
         for (int i = 0; i < json.Count; i++)
         {
             {
-                leaderFree.Add(new PlayerInfor((string)json[i]["namePlayer"], (int)json[i]["avatar"], (int)json[i]["score"]));
+                leaderFree.Add(new PlayerInfor((string)json[i]["namePlayer"], 
+                    (int)json[i]["avatar"], (int)json[i]["score"]));
             }
         }
         // Sap xep leader theo score
@@ -482,9 +488,9 @@ public class Modules : MonoBehaviour {
         LoadDataFree();
         leaderFree.Add(_newData);
         SaveLeaderFree();
-        print("add");
     }
     //
+
     // Xu ly phan leader board campain
     public static List<PlayerInfor> leaderCampain = new List<PlayerInfor>();
     public static void SaveLeaderCampain()

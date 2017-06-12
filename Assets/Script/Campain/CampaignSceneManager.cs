@@ -140,6 +140,7 @@ public class CampaignSceneManager : MonoBehaviour
         textTotalSCore.text = "Total score: " + Modules.scoreTotalCampain;
     }
     //
+
     void CalcuLevel()
     {
         if (timeGame < 0.5f)
@@ -177,11 +178,13 @@ public class CampaignSceneManager : MonoBehaviour
     //xu ly barrier top
     public GameObject barrierTop;
     //
+
     public void WhenPauseGame()
     {
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
         Modules.keepItem = false;
     }
+
     //xu ly nut leaderboard
     public GameObject leaderBoardBox;
     public void ButtonLeaderBoardClick()

@@ -13,15 +13,29 @@ public class SceneManager : MonoBehaviour {
     }
     void Update()
     {
-        SetDaSettingAudioBox();
+        //Set data for setting audio box
+        imageThanhKeo.GetComponent<RectTransform>().position = new Vector3(min.position.x + ((max.position.x - min.position.x) * scb.value),
+            min.position.y, min.position.z);
+        //
+
     }
+
+    // xu ly setting audio 
+    public GameObject settingAudiBox, imageThanhKeo;
     public Scrollbar scb;
     public RectTransform min, max;
-    void SetDaSettingAudioBox()
+    public void ButtonAudioSettingClick()
     {
-        GetComponent<RectTransform>().position = new Vector3(min.position.x + ((max.position.x - min.position.x) * scb.value),
-            min.position.y, min.position.z);
+        Modules.LoadAudio();
+        scb.value = Modules.volume;
+        settingAudiBox.SetActive(true);
+
+    }
+    public void ButtonSaveClick()
+    {
         Modules.volume = scb.value;
         Modules.SaveVolum();
+        settingAudiBox.SetActive(false);
     }
+    //
 }

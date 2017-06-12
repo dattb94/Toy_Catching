@@ -91,6 +91,7 @@ public class StartCampainManager : MonoBehaviour
         StartCampainContain.SetActive(false);
         CamPainContain.SetActive(true);
     }
+
     //xu ly phan bonus gift box
     public GameObject bonusScoreBox;
     public Text textScoreTotalbonusBox;
@@ -116,6 +117,7 @@ public class StartCampainManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     //
+
     //Xy ly phan information level box
     public GameObject infoLebelBox;
     public Text textLevel, textScoreTarget;
