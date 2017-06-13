@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
     public GameObject lostBox;
     void Start()
     {
+        Modules.LoadAudio();
         Modules.SetBarrierTop(barrierTop);
         Modules.isCanPick = true;
         Modules.pauseGame = false;
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour {
                 {
                     Modules.PickItem(Modules.localMouse - 1, listPick, rows, goChoise, listLocal);
                 }
+                else Modules.PlayAudio("nullItem",0.3f);
             }
             else
             if (FindObjectOfType<ItemImage>())
@@ -155,6 +157,7 @@ public class GameManager : MonoBehaviour {
     }
     public void ButtonPauseClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         if (Modules.pauseGame == true)
         {
             Modules.pauseGame = false;
@@ -181,11 +184,13 @@ public class GameManager : MonoBehaviour {
     public GameObject exitBox;
     public void ButtonRetryClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.ResetDataFree();
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     public void ButtonHomeClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         exitBox.SetActive(true);
         Modules.pauseGame = true;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
@@ -193,6 +198,7 @@ public class GameManager : MonoBehaviour {
     }
     public void ButtonYesClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.timeNowFree = (int)timeGame;
         Modules.scoreNowFree = Modules.scoreScene;
         Modules.SaveTimeNowFree();
@@ -201,11 +207,13 @@ public class GameManager : MonoBehaviour {
     }
     public void ButtonNoClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.ResetDataFree();
         StartCoroutine(WaitLoadSceneHome());
     }
     public void ButtonHideExitBoxClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         exitBox.SetActive(false);
         Modules.pauseGame = false;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
@@ -222,6 +230,7 @@ public class GameManager : MonoBehaviour {
     public GameObject leaderBoardBox;
     public void ButtonLeaderBoardClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         leaderBoardBox.SetActive(true);
         Modules.lbShow = true;
         Modules.pauseGame = true;
@@ -237,16 +246,19 @@ public class GameManager : MonoBehaviour {
     public GameObject questionSaveBox, infoPlayerBox;
     public void ButtonLostClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         questionSaveBox.SetActive(true);
         lostBox.SetActive(false);
     }
     public void ButtonYes_qs()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         infoPlayerBox.SetActive(true);
         questionSaveBox.SetActive(false);
     }
     public void ButtonNo_qs()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         questionSaveBox.SetActive(false);
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }

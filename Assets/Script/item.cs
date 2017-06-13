@@ -47,7 +47,11 @@ public class item : MonoBehaviour {
     public void _DesTroy()
     {
         if (transform.name != "item5")
+        {
+            if(!GameObject.Find("audestroyItem"))
+                Modules.PlayAudio("destroyItem",0.5f);
             transform.FindChild("image").GetComponent<Animator>().SetBool("bang", true);
+        }
         Destroy(gameObject, 0.2f);
     }
     void OnTriggerStay2D(Collider2D col)

@@ -24,11 +24,13 @@ public class SetPlayerInfoBoxController : MonoBehaviour {
     }
     public void ButtonChoiseAvatarClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         scrollViewBox.SetActive(true);
         SetDataScrollViewBox();
     }
     public void ButtonAvatarClick(int _index)
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.avatar = Modules.GetAvatar(_index);
         Modules.indexAvatar = _index;
         scrollViewBox.SetActive(false);
@@ -36,6 +38,7 @@ public class SetPlayerInfoBoxController : MonoBehaviour {
     }
     public void ButtonSaveClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         if (textInputName.text != null && Modules.indexAvatar != 100 && textInputName.text != "")
         {
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Campaign")
@@ -62,6 +65,7 @@ public class SetPlayerInfoBoxController : MonoBehaviour {
     }
     public void ButtonCancerClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

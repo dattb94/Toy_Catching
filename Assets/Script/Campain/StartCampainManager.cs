@@ -79,6 +79,7 @@ public class StartCampainManager : MonoBehaviour
     public GameObject StartCampainContain, CamPainContain;
     public void ButtonStackClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.LoadDataCampain();
         infoLebelBox.SetActive(true);
         textLevel.text = "Level: " + Modules.level;
@@ -97,6 +98,7 @@ public class StartCampainManager : MonoBehaviour
     public Text textScoreTotalbonusBox;
     public void ButtonGiftClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.LoadDataCampain();
         Modules.scoreTotalCampain += 50000;
         Modules.SaveScoreTotalCampain();
@@ -107,6 +109,7 @@ public class StartCampainManager : MonoBehaviour
     }
     public void ButtonHideBonusBox()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.indexCampainNow = 0;
         Modules.SaveIndexCampainNow();
         StartCoroutine(WaitLoadSceneHome());

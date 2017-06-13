@@ -39,8 +39,7 @@ public class Modules : MonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         isCanPick = true;
     }
-    public static void PickItem(int _row, List<GameObject> _listPick, Row[] _rows, 
-        GameObject _goChoise, Transform[] _listLocal)
+    public static void PickItem(int _row, List<GameObject> _listPick, Row[] _rows, GameObject _goChoise, Transform[] _listLocal)
     {
         if (!isCanPick)
             return;
@@ -49,7 +48,11 @@ public class Modules : MonoBehaviour {
         if (_rows[_row].items[0] != null)
         {
             if (_rows[_row].items[0].GetComponent<item>().isIron)
+            {
+                PlayAudio("ironItem",0.3f);
                 return;
+            }
+            else PlayAudio("pickItem", 0.5f);
         }
         for (int i = 0; i < _rows[_row].items.Count - 1; i++)
         {
@@ -82,6 +85,7 @@ public class Modules : MonoBehaviour {
     public static void ThrowItem(int _row, Row[] _Rrows, List<GameObject> _listPick, Transform[] _listLocal)
     {
         Modules.Row(_row, _Rrows, _listLocal);
+        PlayAudio("throwitem", 0.3f);
         for (int i = 0; i < _listPick.Count; i++)
         {
             if (_Rrows[_row].items.Count >= 1)
@@ -134,6 +138,8 @@ public class Modules : MonoBehaviour {
     public static void Spawn(Transform[] _listLocal)
     {
         Modules.isSpawning = true;
+        //if(!GameObject.Find("auspawnItem"))
+            Modules.PlayAudio("spawnItem",0.2f);
         for (int i = 0; i < _listLocal.Length; i++)
         {
             GameObject go = null;
@@ -539,6 +545,13 @@ public class Modules : MonoBehaviour {
     #endregion
     #region xu ly am thanh
     public static float volume = 1;
+    public static AudioSource auButtonClick { get { return Resources.Load<AudioSource>("AudioSource/"); } }
+    public static void PlayAudio(string _nameAudio, float _timePlay)
+    {
+        GameObject audio = (GameObject)Instantiate(Resources.Load<AudioSource>("AudioSource/"+ _nameAudio).gameObject);
+        audio.name = "au"+_nameAudio;
+        Destroy(audio,_timePlay);
+    }
     public static void SaveVolum()
     {
         PlayerPrefs.SetFloat("volume",volume);
@@ -547,6 +560,7 @@ public class Modules : MonoBehaviour {
     public static void LoadAudio()
     {
         volume = PlayerPrefs.GetFloat("volume");
+        AudioListener.volume = volume;
     }
     #endregion
 }

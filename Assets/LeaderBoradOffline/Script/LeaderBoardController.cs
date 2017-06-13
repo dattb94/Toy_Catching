@@ -12,16 +12,19 @@ public class LeaderBoardController : MonoBehaviour {
     }
     public void ButtonCampainClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         buttonCampain.SetActive(true);
         buttonFree.SetActive(false);
     }
     public void ButtonFreeClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         buttonCampain.SetActive(false);
         buttonFree.SetActive(true);
     }
     public void ButtonHideLBClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         Modules.lbShow = false;
         StartCoroutine(WaithideLB());
     }

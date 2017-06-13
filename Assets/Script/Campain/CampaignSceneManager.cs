@@ -14,15 +14,13 @@ public class CampaignSceneManager : MonoBehaviour
     float timeGame = 0;
     float loadRows = 0;
     public static bool beLost = false;
-    int timePlay, timeMax = 10;
+    int timePlay;
     bool win = false;
-    int maxCampain;
     public Transform parentCampainStack;
     void Start()
     {
         Modules.pauseGame = false;
         Modules.isCanPick = true;
-        maxCampain = parentCampainStack.childCount;
         Modules.SetBarrierTop(barrierTop);
         Modules.LoadDataCampain();
         Modules.keepItem = false;
@@ -68,10 +66,8 @@ public class CampaignSceneManager : MonoBehaviour
         SetDataStateBar();
         if (Modules.scoreScene >= Modules.scoreNeed && !win)
         {
+            Modules.PlayAudio("win",3);
             Win();
-        }
-        if (win)
-        {
             return;
         }
         CalcuLevel();
@@ -105,6 +101,8 @@ public class CampaignSceneManager : MonoBehaviour
                 {
                     Modules.PickItem(Modules.localMouse - 1, listPick, rows, goChoise, listLocal);
                 }
+
+                else Modules.PlayAudio("nullItem", 0.3f);
             }
             else
                 if (FindObjectOfType<ItemImage>())
@@ -173,6 +171,7 @@ public class CampaignSceneManager : MonoBehaviour
     }
     public void ButtonRetryClick()
     {
+        Modules.PlayAudio("buttonClick",0.3f);
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     //xu ly barrier top
@@ -189,6 +188,7 @@ public class CampaignSceneManager : MonoBehaviour
     public GameObject leaderBoardBox;
     public void ButtonLeaderBoardClick()
     {
+        Modules.PlayAudio("buttonClick", 0.3f);
         leaderBoardBox.SetActive(true);
         Modules.pauseGame = true;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
