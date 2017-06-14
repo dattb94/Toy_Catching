@@ -7,122 +7,100 @@ public class StartCampainManager : MonoBehaviour
 {
     void Start()
     {
-        StartShow();
+        SetDataCanvas();
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetCampain();
+        if (Input.GetKeyDown(KeyCode.A))
+            Modules.ResetCampainData();
     }
-    public void ResetCampain()
-    {
-        Modules.ResetCampainData();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-    }
-    public void StartShow()
+    public GameObject stackparent, buttonNew, buttonPre, startCampainContain, campainContain;
+    public Text textstarNow, textstarTarget, textCampainNow;
+    void SetDataCanvas()
     {
         Modules.LoadDataCampain();
-        SetDataStack();
-    }
-    public Transform parentStacks;
-    public GameObject buttonGift;
-    void SetDataStack()
-    {
-        Modules.LoadDataCampain();
-        if (!PlayerPrefs.HasKey("indexCampainNow"))
+        //set data text
+        int ii = Modules.campainNow + 1;
+        textCampainNow.text = "Campain: " + ii;
+
+        int startNow = 0;
+        for (int i = 0; i < Modules.levelCampain; i++)
         {
-            Modules.indexCampainNow = 0;
-            Modules.SaveIndexCampainNow();
-            print("nll");
+            startNow += Modules.starStack[i];
         }
-        if (Modules.indexCampainNow != parentStacks.childCount)
+
+        textstarNow.text = "star: " + startNow;
+        textstarTarget.text = "target star: " + GetStaTarget();
+        //stdata button
+        if (Modules.campainNow > 0)
         {
-            buttonGift.GetComponent<Image>().color = Color.grey;
-            for (int i = 0; i < parentStacks.childCount; i++)
+            buttonPre.GetComponent<Image>().color = Color.white;
+            buttonPre.GetComponent<Button>().enabled = true;
+        }
+        print(Modules.campainNow + " " + (int)Modules.levelCampain / 6);
+        if (Modules.campainNow < (int)Modules.levelCampain / 6)
+        {
+            buttonNew.GetComponent<Image>().color = Color.white;
+            buttonNew.GetComponent<Button>().enabled = true;
+        }
+        //set data stackParent
+        Transform parent = stackparent.transform;
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            int levelStack = Modules.campainNow * 6 + (i);
+            parent.GetChild(i).FindChild("textLevel").GetComponent<Text>().text = (levelStack + 1) + "";
+            //print(campainNow * 6 + (i)+"   "+i);
+            if (levelStack < Modules.levelCampain)
             {
-                if (i == Modules.indexCampainNow)
+                parent.GetChild(i).FindChild("imgcenter").GetComponent<Image>().color = Color.green;
+                parent.GetChild(i).FindChild("checkmask").gameObject.SetActive(true);
+                parent.GetChild(i).FindChild("Button").gameObject.SetActive(true);
+                parent.GetChild(i).FindChild("bgstar").gameObject.SetActive(true);
+
+                //print(levelStack + " " + _star[levelStack]);
+                for (int j = 0; j < Modules.starStack[levelStack]; j++)
                 {
-                    parentStacks.GetChild(i).FindChild("checkMark").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).FindChild("arrow").gameObject.SetActive(true);
-                    parentStacks.GetChild(i).FindChild("Button").gameObject.SetActive(true);
-                    parentStacks.GetChild(i).GetComponent<Image>().color = Color.white;
-                }
-                else if (i < Modules.indexCampainNow)
-                {
-                    parentStacks.GetChild(i).FindChild("checkMark").gameObject.SetActive(true);
-                    parentStacks.GetChild(i).FindChild("arrow").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).FindChild("Button").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).GetComponent<Image>().color = Color.grey;
-                }
-                else if (i > Modules.indexCampainNow)
-                {
-                    parentStacks.GetChild(i).FindChild("checkMark").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).FindChild("arrow").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).FindChild("Button").gameObject.SetActive(false);
-                    parentStacks.GetChild(i).GetComponent<Image>().color = Color.green;
+                    parent.GetChild(i).FindChild("bgstar").GetChild(j).gameObject.SetActive(true);
                 }
             }
-        }
-        else {
-            for (int i = 0; i < parentStacks.childCount; i++)
+            if (levelStack == Modules.levelCampain)
             {
-                parentStacks.GetChild(i).FindChild("checkMark").gameObject.SetActive(true);
-                parentStacks.GetChild(i).FindChild("arrow").gameObject.SetActive(false);
-                parentStacks.GetChild(i).FindChild("Button").gameObject.SetActive(false);
-                parentStacks.GetChild(i).GetComponent<Image>().color = Color.grey;
+                parent.GetChild(i).FindChild("imgcenter").GetComponent<Image>().color = Color.white;
+                parent.GetChild(i).FindChild("checkmask").gameObject.SetActive(false);
+                parent.GetChild(i).FindChild("Button").gameObject.SetActive(true);
             }
-            buttonGift.GetComponent<Image>().color = Color.white;
-            buttonGift.GetComponent<Button>().enabled = true;
-            buttonGift.GetComponent<Animator>().enabled = true;
+            if (levelStack > Modules.levelCampain)
+            {
+                parent.GetChild(i).FindChild("imgcenter").GetComponent<Image>().color = Color.grey;
+                parent.GetChild(i).FindChild("checkmask").gameObject.SetActive(false);
+                parent.GetChild(i).FindChild("Button").gameObject.SetActive(false);
+            }
         }
+
     }
-    public GameObject StartCampainContain, CamPainContain;
-    public void ButtonStackClick()
+    int GetStaTarget()
     {
-        Modules.PlayAudio("buttonClick", 0.3f);
+        return (Modules.campainNow + 1) * 20;
+    }
+    public void ButtonStackClick(int _index)
+    {
+        Modules.indexCampainNow = Modules.campainNow * 6 + _index;
+        startCampainContain.SetActive(false);
+        campainContain.SetActive(true);
+    }
+    public void ButtonNextClick()
+    {
         Modules.LoadDataCampain();
-        infoLebelBox.SetActive(true);
-        textLevel.text = "Level: " + Modules.level;
-        textScoreTarget.text = "target: " + Modules.scoreNeed + " score";
-        StartCoroutine(WaitLoadCampainContain());
+        Modules.campainNow += 1;
+        Modules.SaveCampainNow();
+        Application.LoadLevel(Application.loadedLevelName);
     }
-    IEnumerator WaitLoadCampainContain()
+    public void ButtonPreClick()
     {
-        yield return new WaitForSeconds(2);
-        StartCampainContain.SetActive(false);
-        CamPainContain.SetActive(true);
+        Modules.LoadDataCampain();
+        Modules.campainNow -= 1;
+        Modules.SaveCampainNow();
+        Application.LoadLevel(Application.loadedLevelName);
     }
 
-    //xu ly phan bonus gift box
-    public GameObject bonusScoreBox;
-    public Text textScoreTotalbonusBox;
-    public void ButtonGiftClick()
-    {
-        Modules.PlayAudio("buttonClick", 0.3f);
-        Modules.LoadDataCampain();
-        Modules.scoreTotalCampain += 50000;
-        Modules.SaveScoreTotalCampain();
-        bonusScoreBox.SetActive(true);
-        textScoreTotalbonusBox.text = "Total score: " + Modules.scoreTotalCampain;
-        buttonGift.GetComponent<Button>().enabled = false;
-        buttonGift.GetComponent<Animator>().enabled = false;
-    }
-    public void ButtonHideBonusBox()
-    {
-        Modules.PlayAudio("buttonClick", 0.3f);
-        Modules.indexCampainNow = 0;
-        Modules.SaveIndexCampainNow();
-        StartCoroutine(WaitLoadSceneHome());
-    }
-    IEnumerator WaitLoadSceneHome()
-    {
-        yield return new WaitForSeconds(1);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-    }
-    //
-
-    //Xy ly phan information level box
-    public GameObject infoLebelBox;
-    public Text textLevel, textScoreTarget;
-    //
 }

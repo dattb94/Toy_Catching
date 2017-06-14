@@ -14,12 +14,21 @@ public class FreeBox : MonoBehaviour {
     public GameObject contentBox, cardPlayer;
     void SetDataContent()
     {
-        Modules.LoadLeaderBoardFree();
-        print(Modules.leaderFree.Count);
+        Modules.LoadLeaderFree();
+        print(Modules.leaderFree.Length);
         //set height content
-        float space = contentBox.GetComponent<VerticalLayoutGroup>().spacing;
+        float space = contentBox.GetComponent<GridLayoutGroup>().spacing.y;
         float cardHeigh = imgCard.GetComponent<RectTransform>().sizeDelta.y;
-        int count = Modules.leaderFree.Count;
+
+        int count = 0;
+        for (int i = 0; i < Modules.leaderFree.Length; i++)
+        {
+            if (Modules.leaderFree[i].namePlayer == "")
+            {
+                count = i;
+                break;
+            }
+        }
         contentBox.GetComponent<RectTransform>().sizeDelta= new Vector2(contentBox.GetComponent<RectTransform>().sizeDelta.x, 
             count*(cardHeigh+space));
         //
@@ -28,17 +37,20 @@ public class FreeBox : MonoBehaviour {
         {
             contentBox.transform.GetChild(i).gameObject.SetActive(false);
         }
-        if (Modules.leaderFree.Count > 0)
+        if (Modules.leaderFree.Length > 0)
         {
-            for (int i = 0; i < Modules.leaderFree.Count; i++)
+            for (int i = 0; i < Modules.leaderFree.Length; i++)
             {
-                GameObject card = contentBox.transform.GetChild(i).gameObject;
-                card.SetActive(true);
-                card.name = Modules.leaderFree[i].namePlayer;
-                card.transform.FindChild("TextStt").GetComponent<Text>().text = i + 1 + "";
-                card.transform.FindChild("TextName").GetComponent<Text>().text = Modules.leaderFree[i].namePlayer + "";
-                card.transform.FindChild("TextScore").GetComponent<Text>().text = Modules.leaderFree[i].score + "";
-                card.transform.FindChild("imgavatar").GetComponent<Image>().sprite = Modules.GetAvatar(Modules.leaderFree[i].avatar);
+                if (Modules.leaderFree[i].namePlayer != "")
+                {
+                    GameObject card = contentBox.transform.GetChild(i).gameObject;
+                    card.SetActive(true);
+                    card.name = Modules.leaderFree[i].namePlayer;
+                    card.transform.FindChild("TextStt").GetComponent<Text>().text = i + 1 + "";
+                    card.transform.FindChild("TextName").GetComponent<Text>().text = Modules.leaderFree[i].namePlayer + "";
+                    card.transform.FindChild("TextScore").GetComponent<Text>().text = Modules.leaderFree[i].score + "";
+                    card.transform.FindChild("imgavatar").GetComponent<Image>().sprite = Modules.GetAvatar(Modules.leaderFree[i].avatar);
+                }
             }
         }
         //

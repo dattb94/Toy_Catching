@@ -41,27 +41,23 @@ public class SetPlayerInfoBoxController : MonoBehaviour {
         Modules.PlayAudio("buttonClick", 0.3f);
         if (textInputName.text != null && Modules.indexAvatar != 100 && textInputName.text != "")
         {
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Campaign")
-            {
-                Modules.AddNewDataToLeaderCampain(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreTotalCampain, Modules.indexCampainNow));
-            }
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "demo")
             {
-                Modules.AddNewDataToLeaderFree(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreScene));
+                Modules.UpdateLeaderFree(new PlayerInfor(textInputName.text, Modules.indexAvatar, Modules.scoreScene));
             }
             textReWrite.text = "Save complete!";
-            StartCoroutine(WaitLoadMain());
+            StartCoroutine(WaitReLoadScene());
         }
         else
         {
             textReWrite.text = "name or avatar is null!";
         }
     }
-    IEnumerator WaitLoadMain()
+    IEnumerator WaitReLoadScene()
     {
         yield return new WaitForSeconds(3);
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     public void ButtonCancerClick()
     {

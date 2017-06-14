@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using LitJson;
+using System;
+using System.Security.Cryptography;
 public class Modules : MonoBehaviour {
     #region xu ly chung
     public static int countBeChoise = 0;
@@ -304,30 +306,66 @@ public class Modules : MonoBehaviour {
     #endregion
     #region xu ly phan champain
     public static int scoreTotalCampain;
-    public static int indexCampainNow;
-    public static int level
+    //phan moi
+    public static int levelCampain;//nhiem vu hien co cao nhat
+    public static void SavelevelCampain()
     {
-        get
+        PlayerPrefs.SetString("levelCampain", TestLeaderBoard.EncryptString(levelCampain.ToString(), "key"));
+        PlayerPrefs.Save();
+    }
+
+    public static int campainNow = 0;//capain hien tai
+    public static void SaveCampainNow()
+    {
+        PlayerPrefs.SetString("campainNow", TestLeaderBoard.EncryptString(campainNow.ToString(), "key"));
+        PlayerPrefs.Save();
+    }
+
+    public static int indexCampainNow;//nhiem vu dang lam
+
+    public static List<int> starStack = new List<int>();// danh sach star hien co moi level
+    public static void SavestarStack()
+    {
+        for (int i = 0; i < starStack.Count; i++)
         {
-            LoadDataCampain();
-            return indexCampainNow + 1;
+            PlayerPrefs.DeleteKey("starStack" + i);
+            PlayerPrefs.SetString("starStack" + i, TestLeaderBoard.EncryptString(starStack[i].ToString(), "key"));
+            PlayerPrefs.Save();
         }
     }
+
+    public static void LoadDataLevel()
+    {
+        if (PlayerPrefs.HasKey("levelCampain"))
+            levelCampain = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
+        else levelCampain = 0;
+        if (PlayerPrefs.HasKey("campainNow"))
+            campainNow = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
+        else campainNow = 0;
+
+        starStack = new List<int>();
+        starStack.Clear();
+        for (int i = 0; i < levelCampain; i++)
+        {
+            if (PlayerPrefs.HasKey("starStack" + i))
+            {
+                starStack.Add(System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
+                //print(i+"   "+starStack[i]);
+            }
+            else starStack.Add(0);
+        }
+    }
+    //
     public static int xxBoom, xxIron, scoreNeed;
     public static void SaveScoreTotalCampain()
     {
         PlayerPrefs.SetInt("scoreTotalCampain", scoreTotalCampain);
         PlayerPrefs.Save();
     }
-    public static void SaveIndexCampainNow()
-    {
-        PlayerPrefs.SetInt("indexCampainNow", indexCampainNow);
-        PlayerPrefs.Save();
-    }
     public static void LoadDataCampain()
     {
         scoreTotalCampain = PlayerPrefs.GetInt("scoreTotalCampain");
-        indexCampainNow = PlayerPrefs.GetInt("indexCampainNow");
+        #region
         switch (indexCampainNow)
         {
             case 0:
@@ -368,14 +406,37 @@ public class Modules : MonoBehaviour {
                     break;
                 }
         }
+        #endregion
         scoreNeed = 20000 + (indexCampainNow + 1) * 5000;
+        //code moi
+        if (PlayerPrefs.HasKey("levelCampain"))
+            levelCampain = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
+        else levelCampain = 0;
+        if (PlayerPrefs.HasKey("campainNow"))
+            campainNow = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
+        else campainNow = 0;
+        starStack = new List<int>();
+        starStack.Clear();
+        for (int i = 0; i < levelCampain; i++)
+        {
+            if (PlayerPrefs.HasKey("starStack" + i))
+            {
+                starStack.Add(System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
+            }
+            else starStack.Add(0);
+        }
     }
     public static void ResetCampainData()
     {
-        indexCampainNow = 0;
         scoreTotalCampain = 0;
-        SaveIndexCampainNow();
         SaveScoreTotalCampain();
+        campainNow = 0;
+        levelCampain = 0;
+        starStack.Clear();
+        SaveCampainNow();
+        SavelevelCampain();
+        SavestarStack();
+        Application.LoadLevel(Application.loadedLevelName);
 
     }
     #endregion
@@ -406,7 +467,6 @@ public class Modules : MonoBehaviour {
     }
     #endregion
     #region xu ly leader board
-
     // Xu ly phan Set player infor
     public static string namePlayer;
     public static Sprite avatar;
@@ -441,43 +501,64 @@ public class Modules : MonoBehaviour {
     }
     public static void ResetLeaderBoard()
     {
-        leaderFree.Clear();
-        leaderCampain.Clear();
-        SaveLeaderCampain();
+        leaderFree= new PlayerInfor[10];
+        for (int i = 0; i < 10; i++)
+            leaderFree[i] = new PlayerInfor("", 0, 0);
+        //leaderCampain.Clear();
+        //SaveLeaderCampain();
         SaveLeaderFree();
     }
     //
 
     //xu ly phan save and load du lieu leader free
-    public static List<PlayerInfor> leaderFree = new List<PlayerInfor>();
+    public static PlayerInfor[] leaderFree;//danh sach xep hang
     public static void SaveLeaderFree()
     {
-        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderFree.json";
-        if (!File.Exists(dataPath))
+        string[] _str = new string[10];
+        for (int i = 0; i < 10; i++)
         {
-            File.Create(dataPath);
-            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderFree));
+            _str[i] = leaderFree[i].namePlayer + "," + leaderFree[i].avatar.ToString() + "," + leaderFree[i].score.ToString();
+            PlayerPrefs.SetString("strLeaderFree" + i, EncryptString(_str[i], "key"));
         }
-        else
-            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderFree));
     }
-    public static void LoadLeaderBoardFree()
+    public static void LoadLeaderFree()
     {
-        //Lay du lieu tu file json ve
-        leaderFree.Clear();
-        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderFree.json";
-        string jsonString = File.ReadAllText(dataPath);
-        JsonData json = JsonMapper.ToObject(jsonString);
-        for (int i = 0; i < json.Count; i++)
+        leaderFree = new PlayerInfor[10];
+        string[] _str = new string[10];
+        for (int i = 0; i < 10; i++)
         {
+            if (PlayerPrefs.HasKey("strLeaderFree" + i))
             {
-                leaderFree.Add(new PlayerInfor((string)json[i]["namePlayer"], 
-                    (int)json[i]["avatar"], (int)json[i]["score"]));
+                _str[i] = DecryptString(PlayerPrefs.GetString("strLeaderFree" + i), "key");
+                leaderFree[i] = StringToPlayerInfo(_str[i]);
+            }
+            else
+            {
+                leaderFree[i] = new PlayerInfor("", 0, 0);
             }
         }
-        // Sap xep leader theo score
-        for (int i = 0; i < leaderFree.Count - 1; i++)
-            for (int j = i + 1; j < leaderFree.Count; j++)
+    }
+    public static PlayerInfor StringToPlayerInfo(string _str)
+    {
+        string[] strs = new string[3];
+        strs = _str.Split(',');
+        return new PlayerInfor(strs[0], Int32.Parse(strs[1]), Int32.Parse(strs[2]));
+    }//chuyem doi tu file string sang PlayerInfo
+    public static bool CompareWithLeader()
+    {
+        for (int i = 0; i < leaderFree.Length; i++)
+        {
+            if (leaderFree[i].score < scoreScene)
+                return true;
+        }
+        return false;
+    }//so sanh voi bang xep hang
+    public static void UpdateLeaderFree(PlayerInfor _new)
+    {
+        LoadLeaderFree();
+        leaderFree[4] = _new;
+        for (int i = 0; i < leaderFree.Length - 1; i++)
+            for (int j = i + 1; j < leaderFree.Length; j++)
             {
                 if (leaderFree[i].score < leaderFree[j].score)
                 {
@@ -486,61 +567,8 @@ public class Modules : MonoBehaviour {
                     leaderFree[j] = x;
                 }
             }
-        print(jsonString);
-        print(leaderFree.Count);
-    }
-    public static void AddNewDataToLeaderFree(PlayerInfor _newData)
-    {
-        LoadDataFree();
-        leaderFree.Add(_newData);
         SaveLeaderFree();
-    }
-    //
-
-    // Xu ly phan leader board campain
-    public static List<PlayerInfor> leaderCampain = new List<PlayerInfor>();
-    public static void SaveLeaderCampain()
-    {
-        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderCampain.json";
-        if (!File.Exists(dataPath))
-        {
-            File.Create(dataPath);
-            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderCampain));
-        }
-        else
-            File.WriteAllText(dataPath, JsonMapper.ToJson(leaderCampain));
-    }
-    public static void LoadLeaderBoardCampain()
-    {
-        //Lay du lieu tu file json ve
-        leaderCampain.Clear();
-        string dataPath = "G:/Du An Unity/LeaderBoardOffline/Assets/leaderCampain.json";
-        string jsonString = File.ReadAllText(dataPath);
-        JsonData json = JsonMapper.ToObject(jsonString);
-        for (int i = 0; i < json.Count; i++)
-        {
-            {
-                leaderCampain.Add(new PlayerInfor((string)json[i]["namePlayer"], (int)json[i]["avatar"], (int)json[i]["score"], (int)json[i]["level"]));
-            }
-        }
-        // Sap xep leader theo score
-        for (int i = 0; i < leaderCampain.Count - 1; i++)
-            for (int j = i + 1; j < leaderCampain.Count; j++)
-            {
-                if (leaderCampain[i].level < leaderCampain[j].level)
-                {
-                    PlayerInfor x = leaderCampain[i];
-                    leaderCampain[i] = leaderCampain[j];
-                    leaderCampain[j] = x;
-                }
-            }
-    }
-    public static void AddNewDataToLeaderCampain(PlayerInfor _newData)
-    {
-        LoadLeaderBoardCampain();
-        leaderCampain.Add(_newData);
-        SaveLeaderCampain();
-    }
+    }//cap nhat bang xep hang
     //
     #endregion
     #region xu ly am thanh
@@ -563,7 +591,85 @@ public class Modules : MonoBehaviour {
         AudioListener.volume = volume;
     }
     #endregion
+    #region mã hoa va giai ma
+    public static string EncryptString(string Message, string Passphrase)
+    {
+        byte[] Results;
+        System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+
+        // Buoc 1: Bam chuoi su dung MD5
+
+        MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider();
+        byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+
+        // Step 2. Tao doi tuong TripleDESCryptoServiceProvider moi
+        TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider();
+
+        // Step 3. Cai dat bo ma hoa
+        TDESAlgorithm.Key = TDESKey;
+        TDESAlgorithm.Mode = CipherMode.ECB;
+        TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+        // Step 4. Convert chuoi (Message) thanh dang byte[]
+        byte[] DataToEncrypt = UTF8.GetBytes(Message);
+
+        // Step 5. Ma hoa chuoi
+        try
+        {
+            ICryptoTransform Encryptor = TDESAlgorithm.CreateEncryptor();
+            Results = Encryptor.TransformFinalBlock(DataToEncrypt, 0, DataToEncrypt.Length);
+        }
+        finally
+        {
+            // Xoa moi thong tin ve Triple DES va HashProvider de dam bao an toan
+            TDESAlgorithm.Clear();
+            HashProvider.Clear();
+        }
+
+        // Step 6. Tra ve chuoi da ma hoa bang thuat toan Base64
+        return Convert.ToBase64String(Results);
+    }
+    public static string DecryptString(string Message, string Passphrase)
+    {
+        byte[] Results;
+        System.Text.UTF8Encoding UTF8 = new System.Text.UTF8Encoding();
+
+        // Step 1. Bam chuoi su dung MD5
+
+        MD5CryptoServiceProvider HashProvider = new MD5CryptoServiceProvider();
+        byte[] TDESKey = HashProvider.ComputeHash(UTF8.GetBytes(Passphrase));
+
+        // Step 2. Tao doi tuong TripleDESCryptoServiceProvider moi
+        TripleDESCryptoServiceProvider TDESAlgorithm = new TripleDESCryptoServiceProvider();
+
+        // Step 3. Cai dat bo giai ma
+        TDESAlgorithm.Key = TDESKey;
+        TDESAlgorithm.Mode = CipherMode.ECB;
+        TDESAlgorithm.Padding = PaddingMode.PKCS7;
+
+        // Step 4. Convert chuoi (Message) thanh dang byte[]
+        byte[] DataToDecrypt = Convert.FromBase64String(Message);
+
+        // Step 5. Bat dau giai ma chuoi
+        try
+        {
+            ICryptoTransform Decryptor = TDESAlgorithm.CreateDecryptor();
+            Results = Decryptor.TransformFinalBlock(DataToDecrypt, 0, DataToDecrypt.Length);
+        }
+        finally
+        {
+            // Xoa moi thong tin ve Triple DES va HashProvider de dam bao an toan
+            TDESAlgorithm.Clear();
+            HashProvider.Clear();
+        }
+
+        // Step 6. Tra ve ket qua bang dinh dang UTF8
+        return UTF8.GetString(Results);
+    }
+
+    #endregion
 }
+[System.Serializable]
 public class PlayerInfor
 {
     public string namePlayer;
@@ -577,11 +683,11 @@ public class PlayerInfor
         avatar = _avatar;
         score = _score;
     }
-    public PlayerInfor(string _name, int _avatar, int _score, int _level)// khai bao phan campain
+    public PlayerInfor(string _name, int _avatar, int _score, int levelCampain)// khai bao phan campain
     {
         namePlayer = _name;
         avatar = _avatar;
         score = _score;
-        level = _level;
+        level = levelCampain;
     }
 }

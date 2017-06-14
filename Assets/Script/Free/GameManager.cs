@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
         Modules.LoadDataFree();
         Modules.scoreScene = Modules.scoreNowFree;
         Modules.keepItem = false;
-        Modules.LoadLeaderBoardFree();
+        Modules.LoadLeaderFree();
         beLost = false;
         timeSpawn = TimeSpawn - 1;
         for (int i = 0; i < rows.Length; i++)
@@ -35,10 +35,9 @@ public class GameManager : MonoBehaviour {
     void Update()
     {
         SetDataButtonPause();
+
         if (Input.GetKey(KeyCode.R))
             Modules.ResetLeaderBoard();
-        if (Input.GetKeyDown(KeyCode.A))
-            Modules.AddNewDataToLeaderFree(new PlayerInfor("aaa", 2, 300));
         SetDataInfogame();
         if (Modules.pauseGame)
             return;
@@ -135,7 +134,7 @@ public class GameManager : MonoBehaviour {
     public Image imgTimeSpaw;
     void SetDataInfogame()
     {
-        if (Modules.leaderFree.Count > 0)
+        if (Modules.leaderFree.Length > 0)
             txtBestScore.text = "Best: " + Modules.leaderFree[0].score;
         else txtBestScore.text = "Best: " + 0;
         txtScoreFree.text = "Score: " + Modules.scoreScene;
@@ -246,9 +245,12 @@ public class GameManager : MonoBehaviour {
     public GameObject questionSaveBox, infoPlayerBox;
     public void ButtonLostClick()
     {
+        Modules.LoadLeaderFree();
         Modules.PlayAudio("buttonClick", 0.3f);
-        questionSaveBox.SetActive(true);
         lostBox.SetActive(false);
+        if (Modules.CompareWithLeader())
+            questionSaveBox.SetActive(true);
+        else ButtonRetryClick();
     }
     public void ButtonYes_qs()
     {
@@ -260,7 +262,7 @@ public class GameManager : MonoBehaviour {
     {
         Modules.PlayAudio("buttonClick", 0.3f);
         questionSaveBox.SetActive(false);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     //
 

@@ -96,6 +96,9 @@
     <Compile Include="Assets\Script\Menu Main\SceneManager.cs" />
     <Compile Include="Assets\Script\Modules.cs" />
     <Compile Include="Assets\Script\item.cs" />
+    <Compile Include="Assets\TestCampain.cs" />
+    <Compile Include="Assets\TestLeaderBoard.cs" />
+    <Compile Include="Assets\TestStartCampain.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

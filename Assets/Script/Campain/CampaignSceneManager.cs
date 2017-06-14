@@ -16,7 +16,6 @@ public class CampaignSceneManager : MonoBehaviour
     public static bool beLost = false;
     int timePlay;
     bool win = false;
-    public Transform parentCampainStack;
     void Start()
     {
         Modules.pauseGame = false;
@@ -34,21 +33,39 @@ public class CampaignSceneManager : MonoBehaviour
         }
     }
     public GameObject CamPainContain, StartCampainContain;
-    public GameObject WinBox, LostBox;
-    public Text textScoreScene, textScoreTotal, textLevelWin;
+    public GameObject WinBox, LostBox, bgStarbonusBox;
+    public Text textScoreTotal, textLevelWin;
     void Win()
     {
-        Modules.LoadDataCampain();
         win = true;
-        WinBox.SetActive(true);
-        textScoreScene.text = "Score: " + Modules.scoreScene;
-        textLevelWin.text = "Level: " + Modules.level;
-        Modules.scoreTotalCampain += Modules.scoreScene;
         Modules.SaveScoreTotalCampain();
+        int lv = Modules.indexCampainNow + 1;
+        textLevelWin.text = "Level: "+lv;
+        for (int i = 0; i < starBonus(); i++)
+        {
+            bgStarbonusBox.transform.GetChild(i).gameObject.SetActive(true);
+        }
+        //
+        if (Modules.indexCampainNow == Modules.levelCampain)
+        {
+            Modules.scoreTotalCampain += Modules.scoreScene;
+            Modules.levelCampain += 1;
+            Modules.starStack.Add(starBonus());
+            Modules.SavelevelCampain();
+            Modules.SavestarStack();
+        }
+        if (Modules.indexCampainNow < Modules.levelCampain)
+        {
+            if (Modules.starStack[Modules.indexCampainNow] < starBonus())
+            {
+                Modules.starStack[Modules.indexCampainNow] = starBonus();
+                Modules.SavestarStack();
+                print("2");
+            }
+        }
+        //
         textScoreTotal.text = "Score total: " + Modules.scoreTotalCampain;
-        Modules.indexCampainNow += 1;
-        Modules.SaveIndexCampainNow();
-        StartCoroutine(WaitLoadCampainScene());
+        WinBox.SetActive(true);
     }
     IEnumerator WaitLoadCampainScene()
     {
@@ -59,6 +76,7 @@ public class CampaignSceneManager : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
+    public Text textTimePlay;
     void Update()
     {
         if (Modules.pauseGame)
@@ -66,7 +84,7 @@ public class CampaignSceneManager : MonoBehaviour
         SetDataStateBar();
         if (Modules.scoreScene >= Modules.scoreNeed && !win)
         {
-            Modules.PlayAudio("win",3);
+            Modules.PlayAudio("win", 3);
             Win();
             return;
         }
@@ -83,7 +101,10 @@ public class CampaignSceneManager : MonoBehaviour
         else {
             Modules.CalcuItemBeChoise(listLocal);
         }
+
         timeGame += Time.deltaTime;
+        textTimePlay.text = "Time: " + (int)timeGame;
+
         timeSpawn += Time.deltaTime;
         if (timeSpawn > TimeSpawn)
         {
@@ -133,7 +154,8 @@ public class CampaignSceneManager : MonoBehaviour
         imgScoreNeed.fillAmount = (float)Modules.scoreScene / Modules.scoreNeed;
         imgTimeSpawn.fillAmount = (float)timeSpawn / TimeSpawn;
         textScoreNeed.text = Modules.scoreScene + "/" + Modules.scoreNeed;
-        textLevel.text = "Level: " + Modules.level;
+        int _index = Modules.indexCampainNow + 1;
+        textLevel.text = "Level: " + _index;
         textScore.text = "Score: " + Modules.scoreScene;
         textTotalSCore.text = "Total score: " + Modules.scoreTotalCampain;
     }
@@ -164,6 +186,20 @@ public class CampaignSceneManager : MonoBehaviour
             TimeSpawn = 6;
         }
     }
+    int starBonus()//tinh diem thuong
+    {
+        if (timeGame <= 25 + Modules.indexCampainNow * 5)
+            return 5;
+        if (25 + Modules.indexCampainNow * 5 < timeGame && timeGame <= 30 + Modules.indexCampainNow * 5)
+            return 4;
+        if (30 + Modules.indexCampainNow * 5 < timeGame && timeGame <= 35 + Modules.indexCampainNow * 5)
+            return 3;
+        if (35 + Modules.indexCampainNow * 5 < timeGame && timeGame <= 40 + Modules.indexCampainNow * 5)
+            return 2;
+        if (40 + Modules.indexCampainNow * 5 < timeGame)
+            return 1;
+        return 1;
+    }
     public void BtnHome()
     {
         Destroy(GameObject.Find("CamPaignData"));
@@ -180,17 +216,6 @@ public class CampaignSceneManager : MonoBehaviour
 
     public void WhenPauseGame()
     {
-        Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
-        Modules.keepItem = false;
-    }
-
-    //xu ly nut leaderboard
-    public GameObject leaderBoardBox;
-    public void ButtonLeaderBoardClick()
-    {
-        Modules.PlayAudio("buttonClick", 0.3f);
-        leaderBoardBox.SetActive(true);
-        Modules.pauseGame = true;
         Modules.ThrowItem(Modules.localMouse - 1, rows, listPick, listLocal);
         Modules.keepItem = false;
     }

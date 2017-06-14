@@ -62,8 +62,10 @@ public class item : MonoBehaviour {
             {
                 GameManager.beLost = true;
             }
-            else {
+            if (GameObject.Find("CampaignScene"))
+            {
                 CampaignSceneManager.beLost = true;
+                print("lost");
             }
         }
         if (col.gameObject.tag == "item")
