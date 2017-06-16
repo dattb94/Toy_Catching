@@ -300,24 +300,31 @@ public class Modules : MonoBehaviour {
     }
 
     // xu ly animation box
-    public static bool lbShow = false;// ani leader board
+    public static bool lbShow = false;// animation leader board
     //
 
     #endregion
     #region xu ly phan champain
-    public static int scoreTotalCampain;
+    public static int scoreTotalCampain;//tong diem
     //phan moi
     public static int levelCampain;//nhiem vu hien co cao nhat
     public static void SavelevelCampain()
     {
-        PlayerPrefs.SetString("levelCampain", TestLeaderBoard.EncryptString(levelCampain.ToString(), "key"));
+        PlayerPrefs.SetString("levelCampain", EncryptString(levelCampain.ToString(), "key"));
+        PlayerPrefs.Save();
+    }
+
+    public static int starBonus;// sao thuong them
+    public static void SaveStarBonus()
+    {
+        PlayerPrefs.SetString("starBonus", EncryptString(starBonus.ToString(), "key"));
         PlayerPrefs.Save();
     }
 
     public static int campainNow = 0;//capain hien tai
     public static void SaveCampainNow()
     {
-        PlayerPrefs.SetString("campainNow", TestLeaderBoard.EncryptString(campainNow.ToString(), "key"));
+        PlayerPrefs.SetString("campainNow", EncryptString(campainNow.ToString(), "key"));
         PlayerPrefs.Save();
     }
 
@@ -329,28 +336,34 @@ public class Modules : MonoBehaviour {
         for (int i = 0; i < starStack.Count; i++)
         {
             PlayerPrefs.DeleteKey("starStack" + i);
-            PlayerPrefs.SetString("starStack" + i, TestLeaderBoard.EncryptString(starStack[i].ToString(), "key"));
+            PlayerPrefs.SetString("starStack" + i, EncryptString(starStack[i].ToString(), "key"));
             PlayerPrefs.Save();
         }
     }
 
     public static void LoadDataLevel()
     {
-        if (PlayerPrefs.HasKey("levelCampain"))
-            levelCampain = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
+        if (PlayerPrefs.HasKey("levelCampain"))//load level campain
+            levelCampain = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
+
         else levelCampain = 0;
-        if (PlayerPrefs.HasKey("campainNow"))
-            campainNow = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
+        if (PlayerPrefs.HasKey("campainNow"))// load index campain now
+            campainNow = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
         else campainNow = 0;
 
+        if (PlayerPrefs.HasKey("starBonus"))//load level campain
+            starBonus = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("starBonus"), "key"));
+
+        else starBonus = 0;
+
+        //Load star levels
         starStack = new List<int>();
         starStack.Clear();
         for (int i = 0; i < levelCampain; i++)
         {
             if (PlayerPrefs.HasKey("starStack" + i))
             {
-                starStack.Add(System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
-                //print(i+"   "+starStack[i]);
+                starStack.Add(System.Int32.Parse(DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
             }
             else starStack.Add(0);
         }
@@ -410,10 +423,10 @@ public class Modules : MonoBehaviour {
         scoreNeed = 20000 + (indexCampainNow + 1) * 5000;
         //code moi
         if (PlayerPrefs.HasKey("levelCampain"))
-            levelCampain = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
+            levelCampain = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("levelCampain"), "key"));
         else levelCampain = 0;
         if (PlayerPrefs.HasKey("campainNow"))
-            campainNow = System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
+            campainNow = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("campainNow"), "key"));
         else campainNow = 0;
         starStack = new List<int>();
         starStack.Clear();
@@ -421,7 +434,7 @@ public class Modules : MonoBehaviour {
         {
             if (PlayerPrefs.HasKey("starStack" + i))
             {
-                starStack.Add(System.Int32.Parse(TestLeaderBoard.DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
+                starStack.Add(System.Int32.Parse(DecryptString(PlayerPrefs.GetString("starStack" + i), "key")));
             }
             else starStack.Add(0);
         }
@@ -441,18 +454,20 @@ public class Modules : MonoBehaviour {
     }
     #endregion
     #region xy ly phan free
-    public static float timeNowFree;
-    public static int scoreNowFree;
+    public static float timeNowFree;// tho gian hien tai dang choi
     public static void SaveTimeNowFree()
     {
         PlayerPrefs.SetFloat("timeNowFree", timeNowFree);
         PlayerPrefs.Save();
     }
+
+    public static int scoreNowFree;//score hien tai
     public static void SaveScoreNowFree()
     {
         PlayerPrefs.SetInt("scoreNowFree", scoreNowFree);
         PlayerPrefs.Save();
     }
+
     public static void LoadDataFree()
     {
         timeNowFree = PlayerPrefs.GetFloat("timeNowFree");
@@ -504,8 +519,6 @@ public class Modules : MonoBehaviour {
         leaderFree= new PlayerInfor[10];
         for (int i = 0; i < 10; i++)
             leaderFree[i] = new PlayerInfor("", 0, 0);
-        //leaderCampain.Clear();
-        //SaveLeaderCampain();
         SaveLeaderFree();
     }
     //
@@ -521,6 +534,7 @@ public class Modules : MonoBehaviour {
             PlayerPrefs.SetString("strLeaderFree" + i, EncryptString(_str[i], "key"));
         }
     }
+
     public static void LoadLeaderFree()
     {
         leaderFree = new PlayerInfor[10];
@@ -572,18 +586,18 @@ public class Modules : MonoBehaviour {
     //
     #endregion
     #region xu ly am thanh
-    public static float volume = 1;
-    public static AudioSource auButtonClick { get { return Resources.Load<AudioSource>("AudioSource/"); } }
+    public static float volume = 1;//am luong
+    public static void SaveVolum()
+    {
+        PlayerPrefs.SetFloat("volume", volume);
+        PlayerPrefs.Save();
+    }
+
     public static void PlayAudio(string _nameAudio, float _timePlay)
     {
         GameObject audio = (GameObject)Instantiate(Resources.Load<AudioSource>("AudioSource/"+ _nameAudio).gameObject);
         audio.name = "au"+_nameAudio;
         Destroy(audio,_timePlay);
-    }
-    public static void SaveVolum()
-    {
-        PlayerPrefs.SetFloat("volume",volume);
-        PlayerPrefs.Save();
     }
     public static void LoadAudio()
     {
@@ -669,7 +683,6 @@ public class Modules : MonoBehaviour {
 
     #endregion
 }
-[System.Serializable]
 public class PlayerInfor
 {
     public string namePlayer;

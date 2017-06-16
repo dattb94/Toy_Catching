@@ -23,11 +23,13 @@ public class StartCampainManager : MonoBehaviour
         int ii = Modules.campainNow + 1;
         textCampainNow.text = "Campain: " + ii;
 
-        int startNow = 0;
+        int startNow = 0;// tong so star hien tai, dat. nham ten bien' ~~!
+
         for (int i = 0; i < Modules.levelCampain; i++)
         {
             startNow += Modules.starStack[i];
         }
+        startNow += Modules.startNow;
 
         textstarNow.text = "star: " + startNow;
         textstarTarget.text = "target star: " + GetStaTarget();
