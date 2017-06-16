@@ -457,21 +457,32 @@ public class Modules : MonoBehaviour {
     public static float timeNowFree;// tho gian hien tai dang choi
     public static void SaveTimeNowFree()
     {
-        PlayerPrefs.SetFloat("timeNowFree", timeNowFree);
+        PlayerPrefs.SetString("timeNowFree", EncryptString(timeNowFree.ToString(), "key"));
+        //PlayerPrefs.SetFloat("timeNowFree", timeNowFree);
         PlayerPrefs.Save();
     }
 
     public static int scoreNowFree;//score hien tai
     public static void SaveScoreNowFree()
     {
-        PlayerPrefs.SetInt("scoreNowFree", scoreNowFree);
+        PlayerPrefs.SetString("scoreNowFree", EncryptString(scoreNowFree.ToString(), "key"));
+        //PlayerPrefs.SetInt("scoreNowFree", scoreNowFree);
         PlayerPrefs.Save();
     }
 
     public static void LoadDataFree()
     {
-        timeNowFree = PlayerPrefs.GetFloat("timeNowFree");
-        scoreNowFree = PlayerPrefs.GetInt("scoreNowFree");
+       // timeNowFree = PlayerPrefs.GetFloat("timeNowFree");
+        //scoreNowFree = PlayerPrefs.GetInt("scoreNowFree");
+
+        if (PlayerPrefs.HasKey("timeNowFree"))//load thoi gian da choi
+            timeNowFree = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("timeNowFree"), "key"));
+        else timeNowFree = 0;
+
+        if (PlayerPrefs.HasKey("scoreNowFree"))//load diem so da choi
+            scoreNowFree = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("scoreNowFree"), "key"));
+        else scoreNowFree = 0;
+
     }
     public static void ResetDataFree()
     {
@@ -589,7 +600,8 @@ public class Modules : MonoBehaviour {
     public static float volume = 1;//am luong
     public static void SaveVolum()
     {
-        PlayerPrefs.SetFloat("volume", volume);
+        PlayerPrefs.SetString("volume", EncryptString(volume.ToString(), "key"));
+        //PlayerPrefs.SetFloat("volume", volume);
         PlayerPrefs.Save();
     }
 
@@ -601,7 +613,10 @@ public class Modules : MonoBehaviour {
     }
     public static void LoadAudio()
     {
-        volume = PlayerPrefs.GetFloat("volume");
+        if (PlayerPrefs.HasKey("volume"))//load thoi gian da choi
+            volume = System.Int32.Parse(DecryptString(PlayerPrefs.GetString("volume"), "key"));
+        else volume = 0;
+        //volume = PlayerPrefs.GetFloat("volume");
         AudioListener.volume = volume;
     }
     #endregion
